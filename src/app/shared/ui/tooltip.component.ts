@@ -1,0 +1,30 @@
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { IconComponent } from './icon.component';
+
+let nextId = 0;
+
+/** Tooltip acessível (hover + foco por teclado), puramente CSS. */
+@Component({
+  selector: 'app-tooltip',
+  standalone: true,
+  imports: [IconComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'group/tip relative inline-flex' },
+  template: `
+    <button type="button" class="inline-flex items-center text-ink-faint transition-colors hover:text-accent-soft focus-visible:text-accent-soft"
+            [attr.aria-describedby]="id" [attr.aria-label]="label()">
+      <ng-content>
+        <app-icon name="info" class="h-4 w-4" />
+      </ng-content>
+    </button>
+    <span role="tooltip" [id]="id"
+          class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 w-64 -translate-x-1/2 translate-y-1 rounded-xl border border-line bg-surface-raised px-3 py-2 text-left text-xs font-normal normal-case leading-relaxed tracking-normal text-ink-muted opacity-0 shadow-card transition-all duration-200 group-hover/tip:translate-y-0 group-hover/tip:opacity-100 group-focus-within/tip:translate-y-0 group-focus-within/tip:opacity-100">
+      {{ text() }}
+    </span>
+  `,
+})
+export class TooltipComponent {
+  readonly text = input.required<string>();
+  readonly label = input('Mais informações');
+  protected readonly id = `tip-${++nextId}`;
+}
