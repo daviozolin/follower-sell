@@ -11,6 +11,7 @@
   --color-surface: 18 18 22;         /* #121216 */
   --color-surface-raised: 28 28 34;  /* #1C1C22 */
   --color-line: 46 46 56;
+  --color-paper: 244 243 236;       /* #F4F3EC — seção clara "Como funciona" */
   /* Texto */
   --color-ink: 246 246 240;
   --color-ink-muted: 168 168 178;
@@ -92,6 +93,10 @@
   }
   .bg-dots {
     background-image: radial-gradient(rgb(var(--color-ink) / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .bg-dots-dark {
+    background-image: radial-gradient(rgb(var(--color-canvas) / 0.12) 1px, transparent 1px);
     background-size: 22px 22px;
   }
   .text-gradient { @apply bg-gradient-to-r from-accent via-accent-soft to-magenta bg-clip-text text-transparent; }

@@ -9,6 +9,7 @@ module.exports = {
         canvas: token('color-canvas'),
         surface: { DEFAULT: token('color-surface'), raised: token('color-surface-raised') },
         line: token('color-line'),
+        paper: token('color-paper'),
         ink: { DEFAULT: token('color-ink'), muted: token('color-ink-muted'), faint: token('color-ink-faint') },
         /** Verde-limão: ação primária, foco, estados positivos. */
         accent: { DEFAULT: token('color-accent'), soft: token('color-accent-soft'), ink: token('color-accent-ink') },

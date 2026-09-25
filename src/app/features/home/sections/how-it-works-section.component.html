@@ -1,19 +1,33 @@
-<app-section-heading index="01" eyebrow="Como funciona">
-  <span title>Simples assim.<br /><span class="title-accent text-accent">4 passos</span>, sem senha.</span>
-  <span subtitle>Você não precisa entender de algoritmo. A gente cuida do ritmo para o crescimento parecer natural.</span>
-</app-section-heading>
+<!-- Seção clara (papel): contraste forte com o hero e com "Serviços", ambos escuros -->
+<div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
+  <app-section-heading index="01" eyebrow="Como funciona" tone="paper">
+    <span title>Simples assim.<br /><span class="title-accent text-magenta">4 passos</span>, sem senha.</span>
+    <span subtitle>Você não precisa entender de algoritmo. A gente cuida do ritmo para o crescimento parecer natural.</span>
+  </app-section-heading>
+  <p class="flex items-center gap-2 rounded-full border border-canvas/15 bg-white/60 px-4 py-2 text-sm font-medium text-canvas/80 lg:mb-2">
+    <app-icon name="clock" class="h-4 w-4 text-magenta" [stroke]="2.2" /> Leva menos de 2 minutos
+  </p>
+</div>
 
-<ol class="relative mt-14 grid gap-4 md:grid-cols-4">
-  <span aria-hidden="true" class="absolute left-0 right-0 top-9 hidden h-px bg-gradient-to-r from-accent via-magenta to-accent/0 md:block"></span>
-  @for (step of steps; track step.title; let i = $index) {
-    <li class="relative rounded-3xl border border-line bg-surface/70 p-6">
-      <div class="flex items-center gap-3">
-        <span class="relative z-10 flex h-12 w-12 items-center justify-center rounded-2xl font-display text-xl font-extrabold"
-              [class]="i === 3 ? 'bg-magenta text-white' : 'bg-accent text-accent-ink'">{{ i + 1 }}</span>
-        <app-icon [name]="step.icon" class="h-5 w-5 text-ink-muted" />
+<ol class="mt-14 grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+  @for (step of steps; track step.title; let i = $index; let last = $last) {
+    <li class="group relative flex flex-col rounded-3xl bg-canvas p-7 text-ink shadow-[0_24px_50px_-28px_rgb(8_8_10/0.55)] transition-transform duration-300 hover:-translate-y-1.5">
+      <div class="flex items-start justify-between">
+        <span class="font-accent text-6xl font-bold italic leading-none"
+              [class]="last ? 'text-magenta' : 'text-accent'">{{ i + 1 }}</span>
+        <span class="flex h-11 w-11 items-center justify-center rounded-2xl border border-line bg-surface-raised text-ink-muted transition-colors group-hover:text-ink">
+          <app-icon [name]="step.icon" class="h-5 w-5" />
+        </span>
       </div>
-      <h3 class="mt-5 font-display text-xl font-bold tracking-tight">{{ step.title }}</h3>
+      <h3 class="mt-8 font-display text-xl font-bold tracking-tight">{{ step.title }}</h3>
       <p class="mt-2 text-sm leading-relaxed text-ink-muted">{{ step.text }}</p>
+      @if (!last) {
+        <!-- seta para o próximo passo (desktop) -->
+        <span aria-hidden="true"
+              class="absolute -right-3 top-1/2 z-10 hidden h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full bg-paper text-canvas lg:flex">
+          <app-icon name="arrow-right" class="h-3.5 w-3.5" [stroke]="2.6" />
+        </span>
+      }
     </li>
   }
 </ol>
