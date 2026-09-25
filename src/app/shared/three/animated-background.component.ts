@@ -33,7 +33,9 @@ function webglAvailable(): boolean {
  *  - o loop roda fora da zona do Angular (sem change detection por frame);
  *  - pausa quando a seção sai da tela ou a aba fica oculta;
  *  - `prefers-reduced-motion`: renderiza um único quadro estático;
- *  - sem WebGL: nada é renderizado (os fundos em CSS continuam valendo).
+ *  - sem WebGL: nada é renderizado (os fundos em CSS continuam valendo);
+ *  - `interactive`: o host continua com `pointer-events: none` (não bloqueia cliques no conteúdo);
+ *    os eventos são lidos na janela e convertidos para coordenadas da seção.
  */
 @Component({
   selector: 'app-animated-bg',
@@ -49,6 +51,8 @@ export class AnimatedBackgroundComponent {
   readonly opacity = input(1);
   readonly density = input(1);
   readonly speed = input(1);
+  /** Reage ao cursor sobre a seção (colina) e a cliques/toques (ondulação). */
+  readonly interactive = input(false);
 
   protected readonly ready = signal(false);
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
@@ -96,14 +100,32 @@ export class AnimatedBackgroundComponent {
     // --- ponteiro (parallax suave, interpolado) -------------------------------
     const pointer = { x: 0, y: 0 };
     const target = { x: 0, y: 0 };
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const interactive = this.interactive() && !reducedMotion.matches;
+
+    /** Ponteiro em NDC relativo à seção, ou `null` se estiver fora dela. */
+    const localNdc = (e: PointerEvent) => {
+      const rect = hostEl.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width;
+      const y = (e.clientY - rect.top) / rect.height;
+      return x < 0 || x > 1 || y < 0 || y > 1 ? null : { x: x * 2 - 1, y: -(y * 2 - 1) };
+    };
     const onPointer = (e: PointerEvent) => {
       target.x = (e.clientX / window.innerWidth) * 2 - 1;
       target.y = -((e.clientY / window.innerHeight) * 2 - 1);
+      // toque não tem "hover": só o clique/toque gera interação
+      if (interactive && e.pointerType === 'mouse') bg.hover?.(localNdc(e));
     };
+    const onPointerDown = (e: PointerEvent) => {
+      const ndc = interactive && localNdc(e);
+      if (ndc) bg.pulse?.(ndc);
+    };
+    const onLeave = () => bg.hover?.(null);
     window.addEventListener('pointermove', onPointer, { passive: true });
+    window.addEventListener('pointerdown', onPointerDown, { passive: true });
+    document.documentElement.addEventListener('pointerleave', onLeave);
 
     // --- loop ------------------------------------------------------------------
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     const clock = new THREE.Clock();
     let elapsed = 12; // começa "no meio" da animação, já com formas interessantes
     const frame = () => {
@@ -137,6 +159,8 @@ export class AnimatedBackgroundComponent {
       intersection.disconnect();
       resizeObserver.disconnect();
       window.removeEventListener('pointermove', onPointer);
+      window.removeEventListener('pointerdown', onPointerDown);
+      document.documentElement.removeEventListener('pointerleave', onLeave);
       document.removeEventListener('visibilitychange', sync);
       reducedMotion.removeEventListener('change', sync);
       bg.dispose();

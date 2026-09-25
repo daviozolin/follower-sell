@@ -18,8 +18,15 @@ export interface BackgroundScene {
   camera: THREE_NS.Camera;
   update(time: number, pointer: { x: number; y: number }): void;
   resize(width: number, height: number, pixelRatio: number): void;
+  /** Interação local: ponteiro sobre a cena em coordenadas normalizadas (-1..1), ou `null` fora dela. */
+  hover?(ndc: { x: number; y: number } | null): void;
+  /** Interação local: clique/toque dispara uma ondulação a partir do ponto. */
+  pulse?(ndc: { x: number; y: number }): void;
   dispose(): void;
 }
+
+/** Nº máximo de ondulações simultâneas (clique/toque). */
+const MAX_RIPPLES = 4;
 
 // -----------------------------------------------------------------------------
 // Onda de partículas: um "terreno" de pontos que ondula devagar (hero / dúvidas)
@@ -27,10 +34,14 @@ export interface BackgroundScene {
 
 const WAVE_VERTEX = /* glsl */ `
   uniform float uTime;
+  uniform float uClock;
   uniform float uPixelRatio;
   uniform vec2 uPointer;
   uniform vec3 uColorA;
   uniform vec3 uColorB;
+  uniform vec2 uHover;          // posição do cursor no plano (x, z)
+  uniform float uHoverStrength; // 0 = cursor fora, 1 = cursor sobre a cena
+  uniform vec4 uRipples[${MAX_RIPPLES}]; // (x, z, início, força)
   attribute float aRandom;
   varying vec3 vColor;
   varying float vAlpha;
@@ -41,12 +52,28 @@ const WAVE_VERTEX = /* glsl */ `
             + sin(p.z * 0.45 + uTime * 0.38) * 0.35
             + sin((p.x + p.z) * 0.18 + uTime * 0.27) * 0.6;
     // leve reação ao ponteiro (parallax)
-    w += uPointer.x * 0.35 * sin(p.z * 0.25 + uTime * 0.2);
-    p.y += w;
+    w += uPointer.x * 0.25 * sin(p.z * 0.25 + uTime * 0.2);
+
+    // "colina" que segue o cursor
+    float d = distance(p.xz, uHover);
+    float bump = exp(-(d * d) / 7.0) * 1.6 * uHoverStrength;
+
+    // ondulações de clique: anel que se expande e perde força
+    float ring = 0.0;
+    for (int i = 0; i < ${MAX_RIPPLES}; i++) {
+      vec4 rp = uRipples[i];
+      float age = uClock - rp.z;
+      if (rp.w <= 0.0 || age < 0.0 || age > 6.0) continue;
+      float dr = distance(p.xz, rp.xy) - age * 3.2;
+      ring += exp(-(dr * dr) / 0.9) * exp(-age * 0.7) * rp.w;
+    }
+
+    p.y += w + bump + ring * 0.9;
+    w += bump * 0.9 + ring * 1.2; // realça a cor onde há interação
 
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
     gl_Position = projectionMatrix * mv;
-    gl_PointSize = (1.6 + aRandom * 1.8) * uPixelRatio * (22.0 / -mv.z);
+    gl_PointSize = (1.6 + aRandom * 1.8 + bump * 1.2 + ring * 1.5) * uPixelRatio * (22.0 / -mv.z);
 
     float crest = smoothstep(-1.1, 1.3, w);
     vColor = mix(uColorA, uColorB, crest);
@@ -100,25 +127,69 @@ export function createWaveScene(THREE: Three, opts: SceneOptions): BackgroundSce
     blending: THREE.AdditiveBlending,
     uniforms: {
       uTime: { value: 0 },
+      uClock: { value: 0 },
       uPixelRatio: { value: 1 },
       uPointer: { value: new THREE.Vector2() },
       uOpacity: { value: opts.opacity },
       uColorA: { value: new THREE.Color(opts.colors[0]) },
       uColorB: { value: new THREE.Color(opts.colors[1]) },
+      uHover: { value: new THREE.Vector2(0, -100) },
+      uHoverStrength: { value: 0 },
+      uRipples: { value: Array.from({ length: MAX_RIPPLES }, () => new THREE.Vector4(0, 0, -100, 0)) },
     },
   });
   const points = new THREE.Points(geometry, material);
   scene.add(points);
 
+  // Projeta o ponteiro (NDC) no plano da onda (y = 0).
+  const raycaster = new THREE.Raycaster();
+  const ground = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+  const hit = new THREE.Vector3();
+  const ndcVec = new THREE.Vector2();
+  const project = (ndc: { x: number; y: number }): THREE_NS.Vector3 | null => {
+    ndcVec.set(ndc.x, ndc.y);
+    raycaster.setFromCamera(ndcVec, camera);
+    return raycaster.ray.intersectPlane(ground, hit);
+  };
+
+  const hoverTarget = new THREE.Vector2(0, -100);
+  let hoverTargetStrength = 0;
+  let clock = 0;
+  let nextRipple = 0;
+
   return {
     scene,
     camera,
     update(time, pointer) {
+      clock = time;
       material.uniforms['uTime'].value = time * opts.speed;
+      material.uniforms['uClock'].value = time;
       (material.uniforms['uPointer'].value as THREE_NS.Vector2).set(pointer.x, pointer.y);
-      camera.position.x = pointer.x * 0.8;
-      camera.position.y = 5.5 + pointer.y * 0.4;
+      // cursor: posição e intensidade interpoladas (movimento macio, sem saltos)
+      (material.uniforms['uHover'].value as THREE_NS.Vector2).lerp(hoverTarget, 0.08);
+      const u = material.uniforms['uHoverStrength'];
+      u.value += (hoverTargetStrength - u.value) * 0.05;
+      camera.position.x = pointer.x * 0.6;
+      camera.position.y = 5.5 + pointer.y * 0.3;
       camera.lookAt(0, 0, -6);
+    },
+    hover(ndc) {
+      const point = ndc && project(ndc);
+      if (point) {
+        // primeira entrada: posiciona direto, para a colina não "viajar" pela tela
+        if (hoverTargetStrength === 0) (material.uniforms['uHover'].value as THREE_NS.Vector2).set(point.x, point.z);
+        hoverTarget.set(point.x, point.z);
+        hoverTargetStrength = 1;
+      } else {
+        hoverTargetStrength = 0;
+      }
+    },
+    pulse(ndc) {
+      const point = project(ndc);
+      if (!point) return;
+      const slots = material.uniforms['uRipples'].value as THREE_NS.Vector4[];
+      slots[nextRipple].set(point.x, point.z, clock, 1);
+      nextRipple = (nextRipple + 1) % MAX_RIPPLES;
     },
     resize(width, height, pixelRatio) {
       camera.aspect = width / Math.max(1, height);

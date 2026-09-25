@@ -12,8 +12,8 @@ import { HeroGrowthChartComponent } from '../components/hero-growth-chart.compon
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'relative block overflow-hidden' },
   template: `
-    <!-- Fundo exclusivo do hero: onda de partículas (Three.js) + glows -->
-    <app-animated-bg variant="wave" [colors]="['#C6FF3D', '#FF2E93']" [opacity]="0.85"
+    <!-- Fundo exclusivo do hero: onda de partículas (Three.js), lenta e interativa (cursor/clique) + glows -->
+    <app-animated-bg variant="wave" [colors]="['#C6FF3D', '#FF2E93']" [opacity]="0.85" [speed]="0.4" [interactive]="true"
                      class="[mask-image:linear-gradient(to_bottom,transparent_0%,#000_45%,#000_85%,transparent_100%)]" />
     <div aria-hidden="true" class="pointer-events-none absolute -left-40 top-10 h-[28rem] w-[28rem] rounded-full bg-accent/20 blur-[120px]"></div>
     <div aria-hidden="true" class="pointer-events-none absolute -right-32 top-40 h-[26rem] w-[26rem] rounded-full bg-magenta/25 blur-[120px]"></div>
