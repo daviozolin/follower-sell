@@ -16,7 +16,7 @@ const SIZE = 29;
     <svg [attr.viewBox]="'-2 -2 ' + (size + 4) + ' ' + (size + 4)" class="h-full w-full" shape-rendering="crispEdges" role="img"
          [attr.aria-label]="'QR Code ilustrativo do pagamento'">
       <rect x="-2" y="-2" [attr.width]="size + 4" [attr.height]="size + 4" rx="1.5" fill="#fff" />
-      <path [attr.d]="path()" fill="#0B0F19" />
+      <path [attr.d]="path()" fill="#08080A" />
     </svg>
   `,
 })

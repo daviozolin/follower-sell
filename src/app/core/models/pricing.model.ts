@@ -4,7 +4,8 @@ export interface Quote {
   subtotal: number;
   discountPct: number;
   discount: number;
-  turboSurcharge: number;
+  /** Adicional do drip-feed (entrega gradual premium). */
+  dripPremium: number;
   total: number;
   estimate: DeliveryEstimate;
 }

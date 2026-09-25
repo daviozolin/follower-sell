@@ -5,7 +5,7 @@ export interface Package {
   platform: Platform;
   serviceType: ServiceType;
   amount: number;
-  /** Preço base em BRL (entrega orgânica/drip-feed). */
+  /** Preço base em BRL (entrega one-shot; o drip-feed soma o adicional premium). */
   price: number;
   isPopular: boolean;
   /** Prazo estimado legível (ex.: "Até 2 dias"). */

@@ -8,13 +8,13 @@ import { IconComponent } from '../shared/ui/icon.component';
   imports: [RouterLink, RouterLinkActive, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/75 backdrop-blur-xl">
+    <header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/80 backdrop-blur-xl">
       <div class="container-page flex h-16 items-center justify-between gap-6">
         <a routerLink="/" class="flex items-center gap-2.5" aria-label="Pulse Growth — início">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-accent to-success shadow-glow">
-            <app-icon name="trending" class="h-4 w-4 text-white" [stroke]="2.2" />
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
+            <app-icon name="trending" class="h-4 w-4 text-accent-ink" [stroke]="2.6" />
           </span>
-          <span class="text-[15px] font-semibold tracking-tight">Pulse<span class="text-ink-muted">Growth</span></span>
+          <span class="font-display text-lg font-extrabold tracking-[-0.03em]">pulse<span class="text-magenta">.</span></span>
         </a>
 
         <nav class="hidden items-center gap-1 text-sm text-ink-muted md:flex" aria-label="Principal">

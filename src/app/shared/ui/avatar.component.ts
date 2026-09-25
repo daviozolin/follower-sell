@@ -17,6 +17,6 @@ export class AvatarComponent {
     this.name().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join('').toUpperCase(),
   );
   protected readonly background = computed(
-    () => `linear-gradient(135deg, hsl(${this.hue()} 70% 55%), hsl(${(this.hue() + 60) % 360} 70% 40%))`,
+    () => `linear-gradient(135deg, hsl(${this.hue()} 85% 58%), hsl(${(this.hue() + 70) % 360} 90% 45%))`,
   );
 }

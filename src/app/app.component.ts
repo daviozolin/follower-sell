@@ -14,7 +14,7 @@ import { ToastOutletComponent } from './shared/ui/toast-outlet.component';
       Pular para o conteúdo
     </a>
     <app-site-header />
-    <main id="conteudo">
+    <main id="conteudo" class="overflow-x-clip">
       <router-outlet />
     </main>
     <app-site-footer />

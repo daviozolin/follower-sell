@@ -91,7 +91,7 @@ export class OrderSelectionStore {
     if (params.service === 'followers' || params.service === 'likes' || params.service === 'views') {
       this.serviceType.set(params.service);
     }
-    if (params.mode === 'turbo' || params.mode === 'drip') this.mode.set(params.mode);
+    if (params.mode === 'oneshot' || params.mode === 'drip') this.mode.set(params.mode);
     if (params.amount) this.setAmount(Number(params.amount));
   }
 

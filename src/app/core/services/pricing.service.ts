@@ -8,8 +8,8 @@ const PRICE_PER_THOUSAND: Record<Platform, Record<ServiceType, number>> = {
   tiktok: { followers: 44.9, likes: 12.9, views: 2.9 },
 };
 
-/** Velocidade do modo turbo (unidades/hora). */
-const TURBO_RATE_PER_HOUR: Record<ServiceType, number> = {
+/** Velocidade do modo one-shot (unidades/hora). */
+const ONESHOT_RATE_PER_HOUR: Record<ServiceType, number> = {
   followers: 450,
   likes: 1500,
   views: 6000,
@@ -27,7 +27,11 @@ const VOLUME_DISCOUNTS: ReadonlyArray<{ from: number; pct: number }> = [
   { from: 2_500, pct: 10 },
 ];
 
-const TURBO_SURCHARGE_PCT = 20;
+/**
+ * Drip-feed é o plano premium: a entrega é fracionada e agendada em lotes ao
+ * longo de dias (mais orquestração, monitoramento contínuo e menor risco).
+ */
+const DRIP_PREMIUM_PCT = 35;
 
 /** Sugestões de ritmo diário no modo drip-feed. */
 const DRIP_PRESETS: Record<ServiceType, number[]> = {
@@ -71,8 +75,8 @@ export class PricingService {
     const subtotal = round2((amount / 1000) * unitPricePerThousand);
     const discountPct = VOLUME_DISCOUNTS.find((d) => amount >= d.from)?.pct ?? 0;
     const discount = round2(subtotal * (discountPct / 100));
-    const turboSurcharge = mode === 'turbo' ? round2((subtotal - discount) * (TURBO_SURCHARGE_PCT / 100)) : 0;
-    const total = Math.max(4.9, round2(subtotal - discount + turboSurcharge));
+    const dripPremium = mode === 'drip' ? round2((subtotal - discount) * (DRIP_PREMIUM_PCT / 100)) : 0;
+    const total = Math.max(4.9, round2(subtotal - discount + dripPremium));
 
     return {
       amount,
@@ -80,22 +84,22 @@ export class PricingService {
       subtotal,
       discountPct,
       discount,
-      turboSurcharge,
+      dripPremium,
       total,
       estimate: this.estimate(service, amount, mode, unitsPerDay ?? this.defaultDripRate(service, amount)),
     };
   }
 
   estimate(service: ServiceType, amount: number, mode: DeliveryMode, unitsPerDay: number): DeliveryEstimate {
-    if (mode === 'turbo') {
-      const hours = amount / TURBO_RATE_PER_HOUR[service];
+    if (mode === 'oneshot') {
+      const hours = amount / ONESHOT_RATE_PER_HOUR[service];
       return { hours, label: formatDuration(hours), startsIn: 'até 15 min' };
     }
     const hours = (amount / Math.max(1, unitsPerDay)) * 24;
     return { hours, label: formatDuration(hours), startsIn: 'até 1 hora' };
   }
 
-  get turboSurchargePct(): number {
-    return TURBO_SURCHARGE_PCT;
+  get dripPremiumPct(): number {
+    return DRIP_PREMIUM_PCT;
   }
 }

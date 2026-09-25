@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { IconComponent } from '../../../shared/ui/icon.component';
+import { SectionHeadingComponent } from '../../../shared/ui/section-heading.component';
 
 interface FaqItem {
   q: string;
@@ -9,30 +10,36 @@ interface FaqItem {
 @Component({
   selector: 'app-faq-section',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, SectionHeadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-      <div>
-        <p class="eyebrow">FAQ</p>
-        <h2 class="section-title mt-2">Dúvidas frequentes</h2>
-        <p class="mt-4 text-ink-muted">Transparência sobre riscos, prazos e garantias — sem letras miúdas.</p>
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <app-section-heading index="04" eyebrow="FAQ">
+          <span title>Perguntas <span class="text-magenta">sem</span> letras miúdas.</span>
+          <span subtitle>Riscos, prazos e garantias explicados de forma direta.</span>
+        </app-section-heading>
       </div>
       <div class="space-y-3">
         @for (item of items; track item.q; let i = $index) {
           @let open = openIndex() === i;
-          <div class="card overflow-hidden transition-colors" [class]="open ? '!border-accent/50' : ''">
+          <div class="overflow-hidden rounded-2xl border bg-surface/80 transition-all duration-300"
+               [class]="open ? 'border-magenta/60 shadow-glow-magenta' : 'border-line hover:border-ink-faint'">
             <h3>
-              <button type="button" class="flex w-full items-center justify-between gap-4 p-5 text-left font-medium"
+              <button type="button" class="flex w-full items-center gap-4 p-5 text-left font-display text-lg font-semibold tracking-tight"
                       [attr.aria-expanded]="open" [attr.aria-controls]="'faq-' + i" (click)="toggle(i)">
-                {{ item.q }}
-                <app-icon name="chevron-down" class="h-5 w-5 text-ink-faint transition-transform duration-300" [class.rotate-180]="open" />
+                <span class="font-mono text-xs font-normal text-ink-faint">{{ (i + 1).toString().padStart(2, '0') }}</span>
+                <span class="flex-1">{{ item.q }}</span>
+                <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border transition-all duration-300"
+                      [class]="open ? 'rotate-180 border-magenta bg-magenta text-white' : 'border-line text-ink-faint'">
+                  <app-icon name="chevron-down" class="h-4 w-4" [stroke]="2.2" />
+                </span>
               </button>
             </h3>
             <div [id]="'faq-' + i" role="region" class="grid transition-[grid-template-rows] duration-300 ease-out"
                  [style.grid-template-rows]="open ? '1fr' : '0fr'">
               <div class="overflow-hidden">
-                <p class="px-5 pb-5 text-sm leading-relaxed text-ink-muted">{{ item.a }}</p>
+                <p class="pb-6 pl-[3.25rem] pr-6 text-sm leading-relaxed text-ink-muted">{{ item.a }}</p>
               </div>
             </div>
           </div>
@@ -46,6 +53,10 @@ export class FaqSectionComponent {
 
   protected readonly items: FaqItem[] = [
     {
+      q: 'Por que o drip-feed custa mais que o one-shot?',
+      a: 'No drip-feed a entrega é fracionada em lotes agendados ao longo de dias, com monitoramento contínuo e ajuste de ritmo. Isso exige mais orquestração do que entregar tudo de uma vez — em troca, o crescimento parece orgânico e o risco é menor.',
+    },
+    {
       q: 'Meu perfil pode ser banido?',
       a: 'Não pedimos senha nem acesso, então não há login suspeito na sua conta. A entrega gradual (drip-feed) respeita ritmos compatíveis com crescimento orgânico, o que reduz drasticamente sinais de atividade atípica.',
     },
@@ -55,7 +66,7 @@ export class FaqSectionComponent {
     },
     {
       q: 'Quanto tempo leva para começar?',
-      a: 'No modo turbo, a entrega inicia em até 15 minutos após a aprovação do pagamento. No modo orgânico, em até 1 hora, seguindo o ritmo diário escolhido. Pix é aprovado em segundos; cartão, em até 2 minutos.',
+      a: 'No one-shot, a entrega inicia em até 15 minutos após a aprovação do pagamento e termina em poucas horas. No drip-feed, inicia em até 1 hora e segue o ritmo diário escolhido. Pix é aprovado em segundos; cartão, em até 2 minutos.',
     },
     {
       q: 'Como funciona a reposição?',

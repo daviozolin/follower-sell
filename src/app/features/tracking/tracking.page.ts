@@ -37,7 +37,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
   template: `
     <section class="container-page max-w-4xl py-10 lg:py-14">
       <p class="eyebrow">Rastreio</p>
-      <h1 class="mt-2 text-3xl font-semibold tracking-tight">Acompanhe seu pedido</h1>
+      <h1 class="display mt-3 text-4xl sm:text-5xl">Acompanhe seu pedido</h1>
       <p class="mt-2 text-ink-muted">Busque pelo código do pedido (ex.: <button type="button" class="font-mono text-accent-soft hover:underline" (click)="fillDemo()">PG-DEMO02</button>) ou pelo e-mail da compra.</p>
 
       <form [formGroup]="search" (ngSubmit)="submit()" class="mt-6 flex flex-col gap-3 sm:flex-row" novalidate>
@@ -105,7 +105,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
                 <dl class="mt-8 grid gap-4 text-sm sm:grid-cols-4">
                   <div><dt class="text-xs text-ink-faint">Serviço</dt><dd class="mt-1">{{ o.amount | number }} {{ serviceLabel(o) }}</dd></div>
                   <div><dt class="text-xs text-ink-faint">Plataforma</dt><dd class="mt-1">{{ platformLabel(o) }}</dd></div>
-                  <div><dt class="text-xs text-ink-faint">Entrega</dt><dd class="mt-1">{{ o.deliverySpeed.mode === 'turbo' ? 'Turbo' : 'Gradual · ' + (o.deliverySpeed.unitsPerDay | number) + '/dia' }}</dd></div>
+                  <div><dt class="text-xs text-ink-faint">Entrega</dt><dd class="mt-1">{{ o.deliverySpeed.mode === 'oneshot' ? 'One-shot' : 'Drip-feed · ' + (o.deliverySpeed.unitsPerDay | number) + '/dia' }}</dd></div>
                   <div><dt class="text-xs text-ink-faint">Total</dt><dd class="mt-1">{{ o.totalPrice | currency }}</dd></div>
                   <div class="sm:col-span-4"><dt class="text-xs text-ink-faint">Destino</dt><dd class="mt-1 truncate font-mono text-xs">{{ o.serviceType === 'followers' ? '@' + o.targetHandle : o.targetHandle }}</dd></div>
                 </dl>

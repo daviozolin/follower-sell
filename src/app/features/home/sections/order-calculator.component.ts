@@ -2,8 +2,9 @@ import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { PLATFORM_LABEL, SERVICE_LABEL } from '../../../core/models';
+import { PricingService } from '../../../core/services/pricing.service';
 import { OrderSelectionStore } from '../../../core/state/order-selection.store';
-import { BadgeComponent } from '../../../shared/ui/badge.component';
+import { SectionHeadingComponent } from '../../../shared/ui/section-heading.component';
 import { IconComponent } from '../../../shared/ui/icon.component';
 import { TooltipComponent } from '../../../shared/ui/tooltip.component';
 
@@ -16,18 +17,17 @@ const SLIDER_STEPS = 1000;
 @Component({
   selector: 'app-order-calculator',
   standalone: true,
-  imports: [CurrencyPipe, DecimalPipe, IconComponent, BadgeComponent, TooltipComponent],
+  imports: [CurrencyPipe, DecimalPipe, IconComponent, TooltipComponent, SectionHeadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="card grid overflow-hidden lg:grid-cols-[1.35fr_1fr]">
-      <div class="p-6 sm:p-8">
-        <p class="eyebrow">Calculadora</p>
-        <h2 class="mt-2 text-2xl font-semibold tracking-tight">Monte um pedido sob medida</h2>
-        <p class="mt-2 text-sm text-ink-muted">
-          {{ platformLabel() }} · {{ serviceLabel() }} — altere plataforma e serviço no seletor acima.
-        </p>
+    <app-section-heading index="02" eyebrow="Calculadora">
+      <span title>Quantidade exata.<br /><span class="text-magenta">Preço na hora.</span></span>
+      <span subtitle>{{ platformLabel() }} · {{ serviceLabel() }} — altere plataforma e serviço no seletor acima.</span>
+    </app-section-heading>
 
-        <div class="mt-8">
+    <div class="mt-12 grid overflow-hidden rounded-3xl border border-line bg-surface shadow-card lg:grid-cols-[1.35fr_1fr]">
+      <div class="p-6 sm:p-10">
+        <div>
           <div class="flex items-end justify-between gap-4">
             <label for="calc-amount" class="label !mb-0">Quantidade</label>
             <div class="flex items-center gap-2">
@@ -53,7 +53,10 @@ const SLIDER_STEPS = 1000;
                       class="rounded-xl border p-4 text-left transition-all duration-200"
                       [class]="active ? 'border-accent bg-accent/10 shadow-glow' : 'border-line bg-canvas/40 hover:border-accent/40'">
                 <span class="flex items-center gap-2 font-medium">
-                  <app-icon [name]="opt.icon" class="h-4 w-4" [class.text-accent-soft]="active" /> {{ opt.label }}
+                  <app-icon [name]="opt.icon" class="h-4 w-4" [class.text-accent]="active" /> {{ opt.label }}
+                  @if (opt.premium) {
+                    <span class="ml-auto rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Premium</span>
+                  }
                 </span>
                 <span class="mt-1 block text-xs text-ink-muted">{{ opt.description }}</span>
               </button>
@@ -71,7 +74,7 @@ const SLIDER_STEPS = 1000;
               @for (rate of store.dripPresets(); track rate) {
                 <button type="button" (click)="store.setUnitsPerDay(rate)"
                         class="rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors"
-                        [class]="store.unitsPerDay() === rate ? 'border-success/60 bg-success/10 text-success' : 'border-line text-ink-muted hover:border-ink-faint'">
+                        [class]="store.unitsPerDay() === rate ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-muted hover:border-ink-faint'">
                   {{ rate | number }}/dia
                 </button>
               }
@@ -80,37 +83,35 @@ const SLIDER_STEPS = 1000;
         }
       </div>
 
-      <aside class="flex flex-col border-t border-line/70 bg-canvas/50 p-6 sm:p-8 lg:border-l lg:border-t-0" aria-live="polite">
-        <p class="text-sm text-ink-muted">Resumo</p>
-        <dl class="mt-4 space-y-3 text-sm">
-          <div class="flex justify-between"><dt class="text-ink-muted">{{ quote().amount | number }} × {{ quote().unitPricePerThousand | currency }}/mil</dt><dd>{{ quote().subtotal | currency }}</dd></div>
+      <!-- Resumo invertido: fundo limão, texto escuro -->
+      <aside class="flex flex-col bg-accent p-6 text-accent-ink sm:p-10" aria-live="polite">
+        <p class="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-ink/60">Resumo</p>
+        <dl class="mt-5 space-y-3 text-sm">
+          <div class="flex justify-between"><dt class="text-accent-ink/70">{{ quote().amount | number }} × {{ quote().unitPricePerThousand | currency }}/mil</dt><dd class="font-medium">{{ quote().subtotal | currency }}</dd></div>
           @if (quote().discount) {
-            <div class="flex justify-between text-success"><dt>Desconto por volume ({{ quote().discountPct }}%)</dt><dd>-{{ quote().discount | currency }}</dd></div>
+            <div class="flex justify-between"><dt class="text-accent-ink/70">Desconto por volume ({{ quote().discountPct }}%)</dt><dd class="font-medium">-{{ quote().discount | currency }}</dd></div>
           }
-          @if (quote().turboSurcharge) {
-            <div class="flex justify-between"><dt class="text-ink-muted">Entrega turbo</dt><dd>+{{ quote().turboSurcharge | currency }}</dd></div>
+          @if (quote().dripPremium) {
+            <div class="flex justify-between"><dt class="text-accent-ink/70">Drip-feed premium (+{{ premiumPct }}%)</dt><dd class="font-medium">+{{ quote().dripPremium | currency }}</dd></div>
           }
         </dl>
-        <div class="my-5 border-t border-dashed border-line"></div>
-        <div class="flex items-baseline justify-between">
-          <span class="text-sm text-ink-muted">Total</span>
-          <span class="text-4xl font-semibold tracking-tight tabular-nums">{{ quote().total | currency }}</span>
-        </div>
-        <div class="mt-5 grid grid-cols-2 gap-3 text-sm">
-          <div class="rounded-xl border border-line bg-surface/60 p-3">
-            <p class="flex items-center gap-1.5 text-xs text-ink-faint"><app-icon name="clock" class="h-3.5 w-3.5" /> Prazo estimado</p>
-            <p class="mt-1 font-medium">{{ quote().estimate.label }}</p>
+        <div class="my-6 border-t-2 border-dashed border-accent-ink/20"></div>
+        <p class="text-sm text-accent-ink/70">Total</p>
+        <p class="display mt-1 text-5xl tabular-nums sm:text-6xl">{{ quote().total | currency }}</p>
+        <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
+          <div class="rounded-xl bg-accent-ink/[0.07] p-3">
+            <p class="flex items-center gap-1.5 text-xs text-accent-ink/60"><app-icon name="clock" class="h-3.5 w-3.5" /> Conclusão</p>
+            <p class="mt-1 font-semibold">{{ quote().estimate.label }}</p>
           </div>
-          <div class="rounded-xl border border-line bg-surface/60 p-3">
-            <p class="flex items-center gap-1.5 text-xs text-ink-faint"><app-icon name="zap" class="h-3.5 w-3.5" /> Início</p>
-            <p class="mt-1 font-medium">{{ quote().estimate.startsIn }}</p>
+          <div class="rounded-xl bg-accent-ink/[0.07] p-3">
+            <p class="flex items-center gap-1.5 text-xs text-accent-ink/60"><app-icon name="zap" class="h-3.5 w-3.5" /> Início</p>
+            <p class="mt-1 font-semibold">{{ quote().estimate.startsIn }}</p>
           </div>
         </div>
-        <div class="mt-5 flex flex-wrap gap-2">
-          <app-badge tone="success">Garantia 30 dias</app-badge>
-          <app-badge tone="neutral">Sem senha</app-badge>
-        </div>
-        <button type="button" class="btn-primary mt-7 w-full" (click)="checkout()">
+        <p class="mt-5 flex items-center gap-2 text-xs font-medium text-accent-ink/70">
+          <app-icon name="shield" class="h-4 w-4" /> Garantia 30 dias · Sem senha
+        </p>
+        <button type="button" class="btn mt-8 w-full bg-canvas text-ink hover:bg-surface-raised hover:shadow-brutal active:scale-[0.98]" (click)="checkout()">
           Continuar para o checkout <app-icon name="arrow-right" class="h-4 w-4" />
         </button>
       </aside>
@@ -142,9 +143,11 @@ export class OrderCalculatorComponent {
     return Math.round(ratio * SLIDER_STEPS);
   });
 
+  protected readonly premiumPct = inject(PricingService).dripPremiumPct;
+
   protected readonly speedOptions = [
-    { value: 'drip' as const, label: 'Orgânica (drip-feed)', icon: 'drip' as const, description: 'Lotes diários, padrão natural.' },
-    { value: 'turbo' as const, label: 'Turbo', icon: 'zap' as const, description: 'Início imediato, conclui em horas.' },
+    { value: 'oneshot' as const, label: 'One-shot', icon: 'zap' as const, premium: false, description: 'Tudo de uma tacada, conclui em horas.' },
+    { value: 'drip' as const, label: 'Drip-feed', icon: 'drip' as const, premium: true, description: `Lotes diários, padrão orgânico (+${this.premiumPct}%).` },
   ];
 
   protected onSlider(event: Event): void {

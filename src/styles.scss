@@ -6,18 +6,25 @@
  * Design tokens (RGB triplets so Tailwind can apply alpha: bg-accent/10)
  * ------------------------------------------------------------------------- */
 :root {
-  --color-canvas: 11 15 25;            /* #0B0F19 */
-  --color-surface: 17 24 39;         /* #111827 */
-  --color-surface-raised: 26 34 52;
-  --color-line: 38 48 68;
-  --color-ink: 237 240 247;
-  --color-ink-muted: 156 165 184;
-  --color-ink-faint: 100 110 132;
-  --color-accent: 99 102 241;        /* #6366F1 */
-  --color-accent-soft: 165 167 255;
-  --color-success: 16 185 129;       /* #10B981 */
-  --color-warning: 245 181 68;
-  --color-danger: 244 91 105;
+  /* Superfícies: preto neutro, levemente frio */
+  --color-canvas: 8 8 10;            /* #08080A */
+  --color-surface: 18 18 22;         /* #121216 */
+  --color-surface-raised: 28 28 34;  /* #1C1C22 */
+  --color-line: 46 46 56;
+  /* Texto */
+  --color-ink: 246 246 240;
+  --color-ink-muted: 168 168 178;
+  --color-ink-faint: 112 112 124;
+  /* Marca */
+  --color-accent: 198 255 61;        /* #C6FF3D verde-limão */
+  --color-accent-soft: 224 255 150;
+  --color-accent-ink: 12 14 4;       /* texto sobre limão */
+  --color-magenta: 255 46 147;       /* #FF2E93 */
+  --color-magenta-soft: 255 128 190;
+  /* Semânticas */
+  --color-success: 198 255 61;       /* = limão, mantém a paleta enxuta */
+  --color-warning: 255 184 48;
+  --color-danger: 255 92 72;         /* laranja-vermelho, distinto do magenta */
 
   color-scheme: dark;
 }
@@ -48,9 +55,10 @@
     @apply inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold
            transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50;
   }
-  .btn-primary { @apply btn bg-accent text-white hover:bg-accent/90 hover:shadow-glow active:scale-[0.98]; }
+  .btn-primary { @apply btn bg-accent text-accent-ink hover:bg-accent-soft hover:shadow-glow active:scale-[0.98]; }
+  .btn-magenta { @apply btn bg-magenta text-white hover:bg-magenta-soft hover:text-canvas hover:shadow-glow-magenta active:scale-[0.98]; }
   .btn-success { @apply btn bg-success text-canvas hover:bg-success/90 hover:shadow-glow-success active:scale-[0.98]; }
-  .btn-ghost { @apply btn border border-line bg-surface-raised/40 text-ink hover:border-accent/60 hover:bg-surface-raised; }
+  .btn-ghost { @apply btn border border-line bg-surface-raised/40 text-ink hover:border-accent/70 hover:bg-surface-raised; }
 
   .input {
     @apply w-full rounded-xl border border-line bg-canvas/60 px-4 py-3 text-sm text-ink placeholder:text-ink-faint
@@ -60,6 +68,24 @@
   .label { @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-muted; }
   .field-error { @apply mt-1.5 text-xs text-danger; }
 
-  .eyebrow { @apply text-xs font-semibold uppercase tracking-[0.2em] text-accent-soft; }
-  .section-title { @apply text-3xl font-semibold tracking-tight text-ink sm:text-4xl; }
+  .eyebrow { @apply inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-accent; }
+  .section-title { @apply font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.03em] text-ink sm:text-5xl; }
+  .display { @apply font-display font-extrabold tracking-[-0.035em]; }
+
+  /* Número de seção "01 / 05" usado nos cabeçalhos */
+  .section-index { @apply font-mono text-[11px] tracking-[0.2em] text-ink-faint; }
+
+  /* Fundos de seção — cada bloco da home tem identidade própria */
+  .bg-grid {
+    background-image:
+      linear-gradient(rgb(var(--color-line) / 0.35) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--color-line) / 0.35) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 75%);
+  }
+  .bg-dots {
+    background-image: radial-gradient(rgb(var(--color-ink) / 0.09) 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+  .text-gradient { @apply bg-gradient-to-r from-accent via-accent-soft to-magenta bg-clip-text text-transparent; }
 }

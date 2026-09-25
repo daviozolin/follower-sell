@@ -33,7 +33,7 @@ type LookupState =
   template: `
     <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="space-y-6">
       <div>
-        <h2 class="text-xl font-semibold">Dados do {{ isProfile() ? 'perfil' : 'conteúdo' }}</h2>
+        <h2 class="font-display text-2xl font-bold tracking-tight">Dados do {{ isProfile() ? 'perfil' : 'conteúdo' }}</h2>
         <p class="mt-1 text-sm text-ink-muted">
           @if (isProfile()) {
             Informe o &#64;usuario do {{ platformLabel() }}. Não pedimos senha.

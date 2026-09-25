@@ -19,7 +19,7 @@ import { CheckoutStore } from '../checkout.store';
     @if (charge(); as c) {
       <div class="space-y-6 text-center">
         <div>
-          <h2 class="text-xl font-semibold">Pague com Pix</h2>
+          <h2 class="font-display text-2xl font-bold tracking-tight">Pague com Pix</h2>
           <p class="mt-1 text-sm text-ink-muted">Escaneie o QR Code ou use o código "copia e cola" no app do seu banco.</p>
         </div>
 

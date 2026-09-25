@@ -63,7 +63,7 @@ const COMPLETED_STEPS: Record<OrderStatus, number> = {
           <span class="font-mono tabular-nums">{{ order().delivered | number }} / {{ order().amount | number }}</span>
         </div>
         <div class="mt-3 h-2 overflow-hidden rounded-full bg-line" role="progressbar" [attr.aria-valuenow]="percent()" aria-valuemin="0" aria-valuemax="100">
-          <div class="relative h-full rounded-full bg-gradient-to-r from-accent to-success transition-[width] duration-700 ease-out" [style.width.%]="percent()">
+          <div class="relative h-full rounded-full bg-gradient-to-r from-magenta to-accent transition-[width] duration-700 ease-out" [style.width.%]="percent()">
             <span class="absolute inset-0 animate-pulse bg-white/20"></span>
           </div>
         </div>

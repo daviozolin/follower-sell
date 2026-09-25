@@ -19,7 +19,7 @@ export class PackageCatalogService {
   /** Síncrono para uso em `computed()` — o catálogo é derivado da tabela de preços. */
   packagesFor(platform: Platform, service: ServiceType): Package[] {
     return AMOUNTS[service].map((amount, index) => {
-      const quote = this.pricing.quote(platform, service, amount, 'drip');
+      const quote = this.pricing.quote(platform, service, amount, 'oneshot');
       return {
         id: `${platform}-${service}-${amount}`,
         platform,

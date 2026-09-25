@@ -21,7 +21,7 @@ import { CheckoutStore } from '../checkout.store';
 
       <div class="mt-5 flex items-center gap-3">
         <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-canvas/60">
-          <app-icon [name]="sel.platform()" class="h-5 w-5 text-accent-soft" />
+          <app-icon [name]="sel.platform()" class="h-5 w-5 text-accent" />
         </span>
         <div>
           <p class="font-medium">{{ sel.amount() | number }} {{ serviceLabel() }}</p>
@@ -38,20 +38,20 @@ import { CheckoutStore } from '../checkout.store';
         }
         <div class="flex justify-between">
           <dt class="text-ink-muted">Entrega</dt>
-          <dd>{{ sel.mode() === 'turbo' ? 'Turbo' : 'Gradual · ' + (sel.unitsPerDay() | number) + '/dia' }}</dd>
+          <dd>{{ sel.mode() === 'oneshot' ? 'One-shot' : 'Drip-feed · ' + (sel.unitsPerDay() | number) + '/dia' }}</dd>
         </div>
         <div class="flex justify-between"><dt class="text-ink-muted">Prazo</dt><dd>{{ sel.quote().estimate.label }}</dd></div>
         @if (sel.quote().discount) {
-          <div class="flex justify-between text-success"><dt>Desconto</dt><dd>-{{ sel.quote().discount | currency }}</dd></div>
+          <div class="flex justify-between text-accent"><dt>Desconto</dt><dd>-{{ sel.quote().discount | currency }}</dd></div>
         }
-        @if (sel.quote().turboSurcharge) {
-          <div class="flex justify-between"><dt class="text-ink-muted">Turbo</dt><dd>+{{ sel.quote().turboSurcharge | currency }}</dd></div>
+        @if (sel.quote().dripPremium) {
+          <div class="flex justify-between"><dt class="text-magenta-soft">Drip-feed premium</dt><dd>+{{ sel.quote().dripPremium | currency }}</dd></div>
         }
       </dl>
 
       <div class="mt-5 flex items-baseline justify-between border-t border-dashed border-line pt-5">
         <span class="text-sm text-ink-muted">Total</span>
-        <span class="text-2xl font-semibold tabular-nums">{{ sel.quote().total | currency }}</span>
+        <span class="display text-3xl tabular-nums">{{ sel.quote().total | currency }}</span>
       </div>
 
       <ul class="mt-6 space-y-2 text-xs text-ink-muted">

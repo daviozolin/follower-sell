@@ -19,7 +19,7 @@ import { CheckoutStore } from '../checkout.store';
             <app-icon name="check" class="h-8 w-8" [stroke]="3" />
           </span>
         </div>
-        <h2 class="mt-6 text-2xl font-semibold">Pagamento aprovado!</h2>
+        <h2 class="display mt-6 text-4xl">Pagamento aprovado!</h2>
         <p class="mt-2 text-sm text-ink-muted">Sua entrega já está na fila. Enviamos o comprovante para <span class="text-ink">{{ order.customerEmail }}</span>.</p>
 
         <div class="mx-auto mt-6 flex max-w-xs items-center justify-between rounded-xl border border-line bg-canvas/50 px-4 py-3">

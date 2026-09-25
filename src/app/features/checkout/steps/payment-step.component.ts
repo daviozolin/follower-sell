@@ -20,7 +20,7 @@ import { CheckoutStore } from '../checkout.store';
   template: `
     <div class="space-y-6">
       <div>
-        <h2 class="text-xl font-semibold">Pagamento</h2>
+        <h2 class="font-display text-2xl font-bold tracking-tight">Pagamento</h2>
         <p class="mt-1 text-sm text-ink-muted">Ambiente criptografado. Não armazenamos dados de cartão.</p>
       </div>
 
@@ -81,7 +81,7 @@ import { CheckoutStore } from '../checkout.store';
       }
 
       <label class="flex cursor-pointer items-start gap-3 text-sm text-ink-muted">
-        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-line bg-canvas accent-[rgb(99,102,241)]" [formControl]="terms" />
+        <input type="checkbox" class="mt-0.5 h-4 w-4 rounded border-line bg-canvas accent-[rgb(198,255,61)]" [formControl]="terms" />
         <span>Li e concordo com os termos de serviço e confirmo que o perfil informado está público.</span>
       </label>
 

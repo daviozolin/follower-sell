@@ -4,7 +4,7 @@ import { CreateOrderRequest, Order, PaymentMethod } from '../models';
 import { randomId } from '../utils/format';
 import { readJson, writeJson } from '../utils/storage';
 
-const STORAGE_KEY = 'pg.orders.v1';
+const STORAGE_KEY = 'pg.orders.v2';
 const GUARANTEE_DAYS = 30;
 const DAY_MS = 86_400_000;
 
@@ -142,7 +142,7 @@ export class MockOrderService {
   private runDelivery(orderId: string): void {
     this.simulations.get(orderId)?.unsubscribe();
     const order = this.store()[orderId];
-    const ticks = order.deliverySpeed.mode === 'turbo' ? 8 : 16;
+    const ticks = order.deliverySpeed.mode === 'oneshot' ? 8 : 16;
     const chunk = Math.ceil(order.amount / ticks);
 
     const sub = timer(order.status === 'processing' ? SIM.processingMs : 0)
@@ -221,7 +221,7 @@ export class MockOrderService {
         serviceType: 'followers',
         packageId: 'instagram-followers-1000',
         amount: 1000,
-        totalPrice: 39.9,
+        totalPrice: 53.87,
         status: 'completed',
         deliverySpeed: { mode: 'drip', unitsPerDay: 250 },
         paymentMethod: 'pix',
@@ -241,9 +241,9 @@ export class MockOrderService {
         serviceType: 'views',
         packageId: 'tiktok-views-10000',
         amount: 10000,
-        totalPrice: 27.84,
+        totalPrice: 23.2,
         status: 'delivering',
-        deliverySpeed: { mode: 'turbo', unitsPerDay: null },
+        deliverySpeed: { mode: 'oneshot', unitsPerDay: null },
         paymentMethod: 'credit_card',
         createdAt: iso(1_800_000),
         paidAt: iso(1_700_000),

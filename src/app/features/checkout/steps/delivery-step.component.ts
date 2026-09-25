@@ -14,7 +14,7 @@ import { CheckoutStore } from '../checkout.store';
   template: `
     <div class="space-y-6">
       <div>
-        <h2 class="text-xl font-semibold">Configuração da entrega</h2>
+        <h2 class="font-display text-2xl font-bold tracking-tight">Configuração da entrega</h2>
         <p class="mt-1 text-sm text-ink-muted">Escolha como o volume será distribuído ao longo do tempo.</p>
       </div>
 
@@ -30,14 +30,14 @@ import { CheckoutStore } from '../checkout.store';
             </span>
             <span class="flex-1">
               <span class="flex items-center gap-2 font-semibold">
-                <app-icon [name]="opt.icon" class="h-4 w-4 text-accent-soft" /> {{ opt.title }}
+                <app-icon [name]="opt.icon" class="h-4 w-4 text-accent" /> {{ opt.title }}
                 @if (opt.recommended) {
-                  <span class="rounded-full bg-success/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-success">Recomendado</span>
+                  <span class="rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Recomendado</span>
                 }
               </span>
               <span class="mt-1 block text-sm text-ink-muted">{{ opt.description }}</span>
             </span>
-            <span class="text-right text-xs text-ink-faint">{{ opt.extra }}</span>
+            <span class="whitespace-nowrap text-right font-mono text-xs" [class]="opt.value === 'drip' ? 'text-magenta-soft' : 'text-ink-faint'">{{ opt.extra }}</span>
           </button>
         }
       </div>
@@ -52,7 +52,7 @@ import { CheckoutStore } from '../checkout.store';
             @for (rate of sel.dripPresets(); track rate) {
               <button type="button" (click)="sel.setUnitsPerDay(rate)"
                       class="rounded-lg border px-3 py-2.5 font-mono text-sm transition-colors"
-                      [class]="sel.unitsPerDay() === rate ? 'border-success/60 bg-success/10 text-success' : 'border-line text-ink-muted hover:border-ink-faint'">
+                      [class]="sel.unitsPerDay() === rate ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-muted hover:border-ink-faint'">
                 {{ rate | number }}
               </button>
             }
@@ -93,20 +93,20 @@ export class DeliveryStepComponent {
 
   protected readonly options: { value: DeliveryMode; title: string; description: string; icon: IconName; extra: string; recommended: boolean }[] = [
     {
-      value: 'drip',
-      title: 'Gradual (drip-feed)',
-      description: 'Entrega em lotes diários, simulando crescimento orgânico. Menor risco.',
-      icon: 'drip',
-      extra: 'Sem custo extra',
-      recommended: true,
+      value: 'oneshot',
+      title: 'One-shot (uma tacada)',
+      description: 'Início em até 15 minutos e entrega completa em poucas horas.',
+      icon: 'zap',
+      extra: 'Preço base',
+      recommended: false,
     },
     {
-      value: 'turbo',
-      title: 'Instantâneo (turbo)',
-      description: 'Início em até 15 minutos e conclusão em poucas horas.',
-      icon: 'zap',
-      extra: `+${this.pricing.turboSurchargePct}%`,
-      recommended: false,
+      value: 'drip',
+      title: 'Drip-feed (gradual)',
+      description: 'Lotes diários agendados, simulando crescimento orgânico. Menor risco.',
+      icon: 'drip',
+      extra: `Premium +${this.pricing.dripPremiumPct}%`,
+      recommended: true,
     },
   ];
 

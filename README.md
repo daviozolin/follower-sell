@@ -2,6 +2,10 @@
 
 Frontend premium para crescimento de Instagram e TikTok. Usa **somente Standalone Components**, **Signals**, o novo control flow (`@if`/`@for`/`@switch`/`@let`), `inject()`, **Reactive Forms (NonNullableFormBuilder)** e **Tailwind CSS** com design tokens em CSS variables.
 
+**Identidade visual:** preto neutro `#08080A`, verde-limão `#C6FF3D` (ação primária) e magenta `#FF2E93` (destaque/premium). Títulos em **Bricolage Grotesque** (display, eixo óptico variável), texto em **Inter** e números/códigos em **JetBrains Mono** — todas auto-hospedadas via Fontsource (sem Google Fonts).
+
+**Modos de entrega:** `oneshot` (uma tacada, preço base) e `drip` (drip-feed, **premium +35%** — ver `DRIP_PREMIUM_PCT` em `pricing.service.ts`).
+
 > Nada aqui chama uma API real. Toda a comunicação externa fica atrás de services mockados (`of/timer + delay`) com a mesma assinatura que a versão HTTP terá.
 
 ## Rodando
@@ -16,7 +20,7 @@ npm run build
 
 ```
 src/
-├── styles.scss                     # design tokens (:root) + camadas Tailwind (.btn, .card, .input…)
+├── styles.scss                     # design tokens (:root) + camadas Tailwind (.btn, .card, .section-title, .bg-grid…)
 └── app/
     ├── app.component.ts            # shell: header + <router-outlet> + footer + toasts
     ├── app.config.ts               # router (lazy, input binding, view transitions, anchor scroll), locale pt-BR/BRL
@@ -34,7 +38,7 @@ src/
     │   ├── validators/             # regex IG/TikTok, URLs de post, Luhn, validade, e-mail, sanitização
     │   └── utils/                  # format, hash/PRNG determinístico, localStorage defensivo
     ├── shared/ui/                  # icon, badge, order-status-badge, tooltip, modal (<dialog>), segmented-control,
-    │                               # avatar, qr-code (ilustrativo), toast-outlet
+    │                               # avatar, qr-code (ilustrativo), toast-outlet, section-heading, marquee
     ├── layout/                     # site-header, site-footer
     └── features/
         ├── home/                   # "/" — hero, seletor, pacotes, calculadora, segurança, FAQ
@@ -48,13 +52,13 @@ src/
 
 | Onde | O que fazer |
 |---|---|
-| Home | Alternar Instagram/TikTok, serviço, Orgânica/Turbo; arrastar o slider da calculadora (escala log) |
+| Home | Alternar Instagram/TikTok, serviço, One-shot/Drip-feed; arrastar o slider da calculadora (escala log) |
 | Checkout · Perfil | `@qualquer.coisa` → preview público · `@perfil.privado` → bloqueia · `@naoexiste` → erro |
 | Checkout · Pagamento | Pix → QR + copia e cola + countdown 15 min → **"Simular pagamento aprovado"** |
 | | Cartão `4242 4242 4242 4242` → aprovado · final `0002` → recusado |
 | Rastreio | `PG-DEMO01` (concluído, refill disponível) · `PG-DEMO02` (em entrega) · e-mail `demo@pulsegrowth.app` |
 
-Pedidos ficam no `localStorage` (`pg.orders.v1`) e a simulação continua de onde parou após recarregar a página. A entrega é acelerada para demo (`SIM` em `mock-order.service.ts`).
+Pedidos ficam no `localStorage` (`pg.orders.v2`) e a simulação continua de onde parou após recarregar a página. A entrega é acelerada para demo (`SIM` em `mock-order.service.ts`).
 
 ## Onde integrar depois
 

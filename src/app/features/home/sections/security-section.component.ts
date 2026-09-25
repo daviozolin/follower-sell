@@ -1,46 +1,48 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { IconComponent, IconName } from '../../../shared/ui/icon.component';
+import { SectionHeadingComponent } from '../../../shared/ui/section-heading.component';
 
+/** Seção invertida: renderizada sobre fundo limão (ver home.page). */
 @Component({
   selector: 'app-security-section',
   standalone: true,
-  imports: [IconComponent],
+  imports: [IconComponent, SectionHeadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="text-center">
-      <p class="eyebrow">Segurança &amp; transparência</p>
-      <h2 class="section-title mx-auto mt-2 max-w-2xl">Nós nunca pedimos sua senha. Nunca.</h2>
-      <p class="mx-auto mt-4 max-w-2xl text-ink-muted">
-        Só precisamos do seu <span class="font-mono text-ink">&#64;usuario</span> ou do link da publicação — as mesmas informações que qualquer visitante vê.
+    <app-section-heading index="03" eyebrow="Segurança & transparência" tone="inverse" align="center">
+      <span title>Nunca pedimos sua senha.<br />Nunca.</span>
+      <span subtitle>
+        Só precisamos do seu <span class="font-mono font-semibold">&#64;usuario</span> ou do link da publicação — o mesmo que qualquer visitante vê.
         Se alguém pedir sua senha em nosso nome, é golpe.
-      </p>
-    </div>
+      </span>
+    </app-section-heading>
 
-    <div class="mt-12 grid gap-4 md:grid-cols-3">
-      @for (pillar of pillars; track pillar.title) {
-        <div class="card p-6 transition-colors hover:border-success/40">
-          <span class="flex h-11 w-11 items-center justify-center rounded-xl border border-success/30 bg-success/10 text-success">
-            <app-icon [name]="pillar.icon" class="h-5 w-5" />
+    <div class="mt-14 grid gap-4 md:grid-cols-3">
+      @for (pillar of pillars; track pillar.title; let i = $index) {
+        <div class="group rounded-3xl bg-canvas p-7 text-ink transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
+             [class]="tilt[i]">
+          <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent text-accent-ink">
+            <app-icon [name]="pillar.icon" class="h-6 w-6" [stroke]="2" />
           </span>
-          <h3 class="mt-5 font-semibold">{{ pillar.title }}</h3>
+          <h3 class="mt-6 font-display text-2xl font-bold tracking-tight">{{ pillar.title }}</h3>
           <p class="mt-2 text-sm leading-relaxed text-ink-muted">{{ pillar.text }}</p>
         </div>
       }
     </div>
 
-    <div class="card mt-4 grid gap-8 p-6 sm:p-8 md:grid-cols-[1fr_1.2fr]">
+    <div class="mt-4 grid gap-8 rounded-3xl border-2 border-accent-ink p-7 sm:p-10 md:grid-cols-[1fr_1.3fr]">
       <div>
-        <h3 class="text-lg font-semibold">Checklist antes de comprar</h3>
-        <p class="mt-2 text-sm text-ink-muted">Para a entrega funcionar sem interrupções, seu perfil precisa atender:</p>
+        <h3 class="font-display text-3xl font-extrabold tracking-tight">Checklist antes de comprar</h3>
+        <p class="mt-3 text-sm text-accent-ink/70">Para a entrega rodar sem interrupções, seu perfil precisa atender:</p>
       </div>
       <ul class="grid gap-3 sm:grid-cols-2">
         @for (item of checklist; track item.text) {
-          <li class="flex items-start gap-3 rounded-xl border border-line bg-canvas/40 p-3 text-sm">
+          <li class="flex items-start gap-3 rounded-2xl bg-accent-ink/[0.07] p-4 text-sm font-medium">
             <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
-                  [class]="item.ok ? 'bg-success/15 text-success' : 'bg-danger/15 text-danger'">
-              <app-icon [name]="item.ok ? 'check' : 'x'" class="h-3 w-3" [stroke]="3" />
+                  [class]="item.ok ? 'bg-accent-ink text-accent' : 'bg-magenta text-white'">
+              <app-icon [name]="item.ok ? 'check' : 'x'" class="h-3 w-3" [stroke]="3.2" />
             </span>
-            <span class="text-ink-muted">{{ item.text }}</span>
+            <span>{{ item.text }}</span>
           </li>
         }
       </ul>
@@ -50,14 +52,16 @@ import { IconComponent, IconName } from '../../../shared/ui/icon.component';
 export class SecuritySectionComponent {
   protected readonly pillars: { icon: IconName; title: string; text: string }[] = [
     { icon: 'key', title: 'Zero acesso à conta', text: 'Não pedimos senha, código SMS ou login. Sua conta permanece 100% sob seu controle.' },
-    { icon: 'drip', title: 'Entrega gradual', text: 'O drip-feed distribui o volume ao longo dos dias, respeitando limites e evitando picos.' },
+    { icon: 'drip', title: 'Entrega no seu ritmo', text: 'One-shot para quem tem pressa, drip-feed para crescimento gradual — sempre respeitando limites.' },
     { icon: 'refresh', title: 'Reposição garantida', text: 'Qualquer queda nos primeiros 30 dias é reposta automaticamente ou sob solicitação.' },
   ];
+
+  protected readonly tilt = ['md:-rotate-1', '', 'md:rotate-1'];
 
   protected readonly checklist = [
     { ok: true, text: 'Perfil público durante toda a entrega' },
     { ok: true, text: '@usuario correto e sem alterações até concluir' },
-    { ok: true, text: 'Publicação disponível (para curtidas e views)' },
+    { ok: true, text: 'Publicação disponível (curtidas e views)' },
     { ok: false, text: 'Nunca envie sua senha ou códigos de verificação' },
   ];
 }
