@@ -1,9 +1,13 @@
 <app-hero-section />
 
-<app-marquee class="-rotate-1 border-y-2 border-canvas bg-magenta py-4 text-white" [items]="marquee" />
+<!--
+  Faixa inclinada por cima da seção clara: z-20 a mantém na frente e -mb-12 puxa o "papel"
+  para baixo dela, cobrindo o triângulo que a inclinação abriria (até ~2.700px de largura).
+-->
+<app-marquee class="relative z-20 -mb-12 -rotate-1 bg-magenta py-4 text-white shadow-[0_18px_40px_-18px_rgb(255_46_147/0.6)]" [items]="marquee" />
 
 <!-- Como funciona: única seção em "papel" claro — separa o hero (escuro) de Serviços (escuro) -->
-<section id="como-funciona" class="bg-dots-dark relative scroll-mt-16 rounded-b-[2.5rem] bg-paper py-24 text-canvas lg:rounded-b-[4rem] lg:py-28">
+<section id="como-funciona" class="bg-dots-dark relative scroll-mt-16 rounded-b-[2.5rem] bg-paper pb-24 pt-36 text-canvas lg:rounded-b-[4rem] lg:pb-28 lg:pt-40">
   <div class="container-page">
     <app-how-it-works-section />
   </div>
