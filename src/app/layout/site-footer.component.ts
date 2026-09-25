@@ -16,7 +16,7 @@ import { IconComponent } from '../shared/ui/icon.component';
         </div>
         <div class="flex gap-5">
           <a routerLink="/rastreio" class="hover:text-ink">Rastrear pedido</a>
-          <a routerLink="/" fragment="faq" class="hover:text-ink">FAQ</a>
+          <a routerLink="/" fragment="faq" class="hover:text-ink">Dúvidas</a>
           <span class="text-ink-faint">© {{ year }} Pulse Growth</span>
         </div>
       </div>

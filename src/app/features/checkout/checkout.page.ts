@@ -29,7 +29,7 @@ import { ProfileStepComponent } from './steps/profile-step.component';
     <section class="container-page py-10 lg:py-14">
       <div class="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p class="eyebrow flex items-center gap-2"><app-icon name="lock" class="h-3.5 w-3.5" /> Checkout seguro</p>
+          <p class="eyebrow flex items-center gap-2"><app-icon name="lock" class="h-3.5 w-3.5" /> Pagamento seguro</p>
           <h1 class="display mt-3 text-4xl sm:text-5xl">Finalize seu pedido</h1>
         </div>
         @if (store.stepIndex() < 3) {
@@ -58,6 +58,17 @@ export class CheckoutPage implements OnInit {
 
   ngOnInit(): void {
     const q = this.route.snapshot.queryParamMap;
+    if (q.get('combo')) {
+      const platform = q.get('platform') === 'tiktok' ? 'tiktok' : 'instagram';
+      const pace = q.get('pace');
+      const base = Number(q.get('base'));
+      this.store.startCombo(
+        platform,
+        Number.isFinite(base) ? Math.min(5_000_000, base) : 5_000,
+        pace === 'intense' || pace === 'gentle' ? pace : 'natural',
+      );
+      return;
+    }
     this.store.selection.hydrate({
       platform: q.get('platform'),
       service: q.get('service'),

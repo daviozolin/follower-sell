@@ -76,7 +76,7 @@ import { CheckoutStore } from '../checkout.store';
               }
             </select>
           </div>
-          <p class="text-xs text-ink-faint sm:col-span-2">Mock: cartões terminados em <span class="font-mono">0002</span> são recusados. Teste com 4242 4242 4242 4242.</p>
+          <p class="text-xs text-ink-faint sm:col-span-2">Ambiente de teste: cartões terminados em <span class="font-mono">0002</span> são recusados. Teste com 4242 4242 4242 4242.</p>
         </form>
       }
 
@@ -100,7 +100,7 @@ import { CheckoutStore } from '../checkout.store';
             <app-icon name="loader" class="h-4 w-4 animate-spin" /> Processando…
           } @else {
             <app-icon name="lock" class="h-4 w-4" />
-            {{ store.paymentMethod() === 'pix' ? 'Gerar Pix de' : 'Pagar' }} {{ store.selection.quote().total | currency }}
+            {{ store.paymentMethod() === 'pix' ? 'Gerar Pix de' : 'Pagar' }} {{ store.total() | currency }}
           }
         </button>
       </div>
@@ -135,7 +135,7 @@ export class PaymentStepComponent {
   });
 
   protected readonly installmentOptions = computed(() => {
-    const total = this.store.selection.quote().total;
+    const total = this.store.total();
     return [1, 2, 3, 4, 5, 6].map((n) => {
       const withInterest = n > 3 ? total * (1 + 0.0299 * n) : total;
       const each = (withInterest / n).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -198,19 +198,7 @@ export class PaymentStepComponent {
     if (existing) {
       return existing.paymentMethod === method ? of(existing) : this.orders.updatePaymentMethod(existing.id, method);
     }
-    const profile = this.store.profile()!;
-    const snap = this.store.selection.snapshot();
-    return this.orders.createOrder({
-      customerEmail: profile.email,
-      targetHandle: profile.target,
-      platform: snap.platform,
-      serviceType: snap.serviceType,
-      packageId: snap.packageId,
-      amount: snap.amount,
-      totalPrice: this.store.selection.quote().total,
-      deliverySpeed: { mode: snap.mode, unitsPerDay: snap.mode === 'drip' ? snap.unitsPerDay : null },
-      paymentMethod: method,
-    });
+    return this.orders.createOrder(this.store.orderRequest(method));
   }
 
   private startPix(order: Order): Observable<unknown> {

@@ -49,9 +49,10 @@ import { IconComponent } from '../shared/ui/icon.component';
 export class SiteHeaderComponent {
   protected readonly menuOpen = signal(false);
   protected readonly links = [
+    { label: 'Como funciona', fragment: 'como-funciona' },
     { label: 'Serviços', fragment: 'servicos' },
-    { label: 'Calculadora', fragment: 'calculadora' },
+    { label: 'Combos', fragment: 'combos' },
     { label: 'Segurança', fragment: 'seguranca' },
-    { label: 'FAQ', fragment: 'faq' },
+    { label: 'Dúvidas', fragment: 'faq' },
   ];
 }

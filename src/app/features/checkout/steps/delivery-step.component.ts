@@ -1,6 +1,8 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { DeliveryMode } from '../../../core/models';
+import { BUNDLE_PACE_LABEL, DeliveryMode, SERVICE_LABEL } from '../../../core/models';
+import { BundleService } from '../../../core/services/bundle.service';
+import { BundleScheduleChartComponent } from '../../../shared/ui/bundle-schedule-chart.component';
 import { PricingService } from '../../../core/services/pricing.service';
 import { IconComponent, IconName } from '../../../shared/ui/icon.component';
 import { TooltipComponent } from '../../../shared/ui/tooltip.component';
@@ -9,15 +11,51 @@ import { CheckoutStore } from '../checkout.store';
 @Component({
   selector: 'app-delivery-step',
   standalone: true,
-  imports: [DecimalPipe, IconComponent, TooltipComponent],
+  imports: [DecimalPipe, IconComponent, TooltipComponent, BundleScheduleChartComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="space-y-6">
       <div>
         <h2 class="font-display text-2xl font-bold tracking-tight">Configuração da entrega</h2>
-        <p class="mt-1 text-sm text-ink-muted">Escolha como o volume será distribuído ao longo do tempo.</p>
+        <p class="mt-1 text-sm text-ink-muted">
+          {{ store.isCombo() ? 'Seguidores, curtidas e visualizações chegam juntos, no ritmo que você escolher.' : 'Escolha como o volume será distribuído ao longo do tempo.' }}
+        </p>
       </div>
 
+      @if (store.bundle(); as plan) {
+        <!-- Combo orgânico: sempre gradual; o cliente escolhe o ritmo -->
+        <div role="radiogroup" aria-label="Ritmo do combo" class="grid gap-3 sm:grid-cols-3">
+          @for (opt of paceOptions(); track opt.value) {
+            @let active = plan.pace === opt.value;
+            <button type="button" role="radio" [attr.aria-checked]="active" (click)="store.setComboPace(opt.value)"
+                    class="rounded-xl border p-4 text-left transition-all duration-200"
+                    [class]="active ? 'border-magenta bg-magenta/10 shadow-glow-magenta' : 'border-line bg-canvas/40 hover:border-magenta/40'">
+              <span class="flex items-center justify-between font-semibold">
+                {{ opt.label }}
+                @if (opt.value === 'natural') {
+                  <span class="rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Ideal</span>
+                }
+              </span>
+              <span class="mt-1 block font-mono text-xs text-ink-muted">{{ opt.days }} dias · {{ opt.adj }}</span>
+            </button>
+          }
+        </div>
+
+        <ul class="grid gap-3 sm:grid-cols-3">
+          @for (c of plan.components; track c.service) {
+            <li class="rounded-xl border border-line bg-canvas/40 p-4">
+              <p class="text-xs text-ink-muted">{{ serviceLabel[c.service] }}</p>
+              <p class="mt-1 font-display text-2xl font-bold tabular-nums">+{{ c.amount | number }}</p>
+              @if (c.posts) { <p class="text-xs text-ink-faint">{{ c.perPost | number }} × {{ c.posts }} publicações recentes</p> }
+              @else { <p class="text-xs text-ink-faint">no perfil, ao longo de {{ plan.durationDays }} dias</p> }
+            </li>
+          }
+        </ul>
+
+        <div class="rounded-xl border border-line bg-canvas/40 p-5">
+          <app-bundle-schedule-chart [days]="plan.schedule" />
+        </div>
+      } @else {
       <div role="radiogroup" aria-label="Velocidade de entrega" class="grid gap-3">
         @for (opt of options; track opt.value) {
           @let active = sel.mode() === opt.value;
@@ -76,6 +114,7 @@ import { CheckoutStore } from '../checkout.store';
           <p class="mt-1 font-medium">{{ sel.quote().estimate.label }}</p>
         </div>
       </div>
+      }
 
       <div class="flex gap-3">
         <button type="button" class="btn-ghost" (click)="store.goTo('profile')"><app-icon name="chevron-left" class="h-4 w-4" /> Voltar</button>
@@ -90,25 +129,43 @@ export class DeliveryStepComponent {
   protected readonly store = inject(CheckoutStore);
   protected readonly sel = this.store.selection;
   private readonly pricing = inject(PricingService);
+  private readonly bundles = inject(BundleService);
 
   protected readonly options: { value: DeliveryMode; title: string; description: string; icon: IconName; extra: string; recommended: boolean }[] = [
     {
       value: 'oneshot',
-      title: 'One-shot (uma tacada)',
-      description: 'Início em até 15 minutos e entrega completa em poucas horas.',
+      title: 'Entrega rápida',
+      description: 'Tudo de uma vez: começa em até 15 minutos e termina em poucas horas.',
       icon: 'zap',
       extra: 'Preço base',
       recommended: false,
     },
     {
       value: 'drip',
-      title: 'Drip-feed (gradual)',
-      description: 'Lotes diários agendados, simulando crescimento orgânico. Menor risco.',
+      title: 'Entrega gradual',
+      description: 'Um pouco por dia, como um perfil que cresce naturalmente. Mais discreto e seguro.',
       icon: 'drip',
-      extra: `Premium +${this.pricing.dripPremiumPct}%`,
+      extra: `+${this.pricing.dripPremiumPct}%`,
       recommended: true,
     },
   ];
+
+  protected readonly serviceLabel = SERVICE_LABEL;
+
+  /** Opções de ritmo com dias e ajuste de preço calculados para a base atual. */
+  protected readonly paceOptions = computed(() => {
+    const plan = this.store.bundle();
+    if (!plan) return [];
+    return (['intense', 'natural', 'gentle'] as const).map((pace) => {
+      const p = this.bundles.plan(plan.platform, plan.baseFollowers, pace);
+      return {
+        value: pace,
+        label: BUNDLE_PACE_LABEL[pace],
+        days: p.durationDays,
+        adj: p.paceAdjustmentPct === 0 ? 'preço base' : `${p.paceAdjustmentPct > 0 ? '+' : ''}${p.paceAdjustmentPct}%`,
+      };
+    });
+  });
 
   protected readonly paceWarning = computed(() => {
     const followers = this.store.profile()?.preview?.followers;

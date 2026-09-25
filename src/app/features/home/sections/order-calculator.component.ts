@@ -20,7 +20,7 @@ const SLIDER_STEPS = 1000;
   imports: [CurrencyPipe, DecimalPipe, IconComponent, TooltipComponent, SectionHeadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-section-heading index="02" eyebrow="Calculadora">
+    <app-section-heading index="04" eyebrow="Calculadora">
       <span title>Quantidade exata.<br /><span class="text-magenta">Preço na hora.</span></span>
       <span subtitle>{{ platformLabel() }} · {{ serviceLabel() }} — altere plataforma e serviço no seletor acima.</span>
     </app-section-heading>
@@ -55,7 +55,7 @@ const SLIDER_STEPS = 1000;
                 <span class="flex items-center gap-2 font-medium">
                   <app-icon [name]="opt.icon" class="h-4 w-4" [class.text-accent]="active" /> {{ opt.label }}
                   @if (opt.premium) {
-                    <span class="ml-auto rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Premium</span>
+                    <span class="ml-auto rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Mais natural</span>
                   }
                 </span>
                 <span class="mt-1 block text-xs text-ink-muted">{{ opt.description }}</span>
@@ -92,7 +92,7 @@ const SLIDER_STEPS = 1000;
             <div class="flex justify-between"><dt class="text-accent-ink/70">Desconto por volume ({{ quote().discountPct }}%)</dt><dd class="font-medium">-{{ quote().discount | currency }}</dd></div>
           }
           @if (quote().dripPremium) {
-            <div class="flex justify-between"><dt class="text-accent-ink/70">Drip-feed premium (+{{ premiumPct }}%)</dt><dd class="font-medium">+{{ quote().dripPremium | currency }}</dd></div>
+            <div class="flex justify-between"><dt class="text-accent-ink/70">Adicional entrega gradual (+{{ premiumPct }}%)</dt><dd class="font-medium">+{{ quote().dripPremium | currency }}</dd></div>
           }
         </dl>
         <div class="my-6 border-t-2 border-dashed border-accent-ink/20"></div>
@@ -112,7 +112,7 @@ const SLIDER_STEPS = 1000;
           <app-icon name="shield" class="h-4 w-4" /> Garantia 30 dias · Sem senha
         </p>
         <button type="button" class="btn mt-8 w-full bg-canvas text-ink hover:bg-surface-raised hover:shadow-brutal active:scale-[0.98]" (click)="checkout()">
-          Continuar para o checkout <app-icon name="arrow-right" class="h-4 w-4" />
+          Continuar para o pagamento <app-icon name="arrow-right" class="h-4 w-4" />
         </button>
       </aside>
     </div>
@@ -146,8 +146,8 @@ export class OrderCalculatorComponent {
   protected readonly premiumPct = inject(PricingService).dripPremiumPct;
 
   protected readonly speedOptions = [
-    { value: 'oneshot' as const, label: 'One-shot', icon: 'zap' as const, premium: false, description: 'Tudo de uma tacada, conclui em horas.' },
-    { value: 'drip' as const, label: 'Drip-feed', icon: 'drip' as const, premium: true, description: `Lotes diários, padrão orgânico (+${this.premiumPct}%).` },
+    { value: 'oneshot' as const, label: 'Entrega rápida', icon: 'zap' as const, premium: false, description: 'Tudo de uma vez, em poucas horas.' },
+    { value: 'drip' as const, label: 'Entrega gradual', icon: 'drip' as const, premium: true, description: `Um pouco por dia, como o crescimento natural (+${this.premiumPct}%).` },
   ];
 
   protected onSlider(event: Event): void {

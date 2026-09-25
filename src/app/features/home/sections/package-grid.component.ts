@@ -27,7 +27,7 @@ interface PackageCardVm {
     <div class="mt-12 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
       <div class="flex items-center gap-2 text-sm text-ink-muted">
         <span>Modo de entrega</span>
-        <app-tooltip text="One-shot entrega tudo de uma tacada, em poucas horas. Drip-feed (premium, +{{ premiumPct }}%) fraciona a entrega em lotes diários agendados, imitando crescimento orgânico." />
+        <app-tooltip text="Rápida: tudo de uma vez, em poucas horas. Gradual (+{{ premiumPct }}%): um pouco por dia, como um perfil que cresce naturalmente — mais discreto." />
       </div>
       <app-segmented-control class="w-full sm:w-96" ariaLabel="Modo de entrega" [options]="modeOptions"
                              [value]="store.mode()" (valueChange)="store.setMode($event)" />
@@ -83,8 +83,8 @@ export class PackageGridComponent {
   protected readonly serviceLabel = computed(() => SERVICE_LABEL[this.store.serviceType()]);
 
   protected readonly modeOptions: SegmentOption<DeliveryMode>[] = [
-    { value: 'oneshot', label: 'One-shot', icon: 'zap', hint: 'uma tacada' },
-    { value: 'drip', label: 'Drip-feed', icon: 'drip', hint: `+${this.pricing.dripPremiumPct}%` },
+    { value: 'oneshot', label: 'Rápida', icon: 'zap', hint: 'em horas' },
+    { value: 'drip', label: 'Gradual', icon: 'drip', hint: `+${this.pricing.dripPremiumPct}%` },
   ];
 
   /** Preço de cada card recalculado quando plataforma, serviço ou modo mudam. */

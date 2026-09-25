@@ -1,6 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
-import { Order, OrderStatus } from '../../../core/models';
+import { Order, OrderStatus, SERVICE_LABEL, ServiceType } from '../../../core/models';
 import { IconComponent, IconName } from '../../../shared/ui/icon.component';
 
 type StepState = 'done' | 'current' | 'upcoming';
@@ -57,6 +57,24 @@ const COMPLETED_STEPS: Record<OrderStatus, number> = {
     </ol>
 
     @if (order().status === 'delivering' || order().status === 'processing') {
+      @if (order().bundle; as bundle) {
+        <div class="mt-8 space-y-4 rounded-xl border border-line bg-canvas/40 p-4">
+          <p class="text-sm text-ink-muted">Progresso por componente</p>
+          @for (c of bundle.components; track c.service) {
+            <div>
+              <div class="flex justify-between text-xs">
+                <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm" [style.background]="seriesColor[c.service]"></span>{{ serviceLabel[c.service] }}</span>
+                <span class="font-mono tabular-nums text-ink-muted">{{ c.delivered | number }} / {{ c.amount | number }}</span>
+              </div>
+              <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar"
+                   [attr.aria-label]="serviceLabel[c.service]" [attr.aria-valuenow]="pct(c.delivered, c.amount)" aria-valuemin="0" aria-valuemax="100">
+                <div class="h-full rounded-full transition-[width] duration-700 ease-out"
+                     [style.width.%]="pct(c.delivered, c.amount)" [style.background]="seriesColor[c.service]"></div>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
       <div class="mt-8 rounded-xl border border-line bg-canvas/40 p-4">
         <div class="flex justify-between text-sm">
           <span class="text-ink-muted">Progresso da entrega</span>
@@ -69,11 +87,20 @@ const COMPLETED_STEPS: Record<OrderStatus, number> = {
         </div>
         <p class="mt-2 text-right text-xs text-ink-faint">{{ percent() }}%</p>
       </div>
+      }
     }
   `,
 })
 export class OrderTimelineComponent {
   readonly order = input.required<Order>();
+
+  protected readonly serviceLabel = SERVICE_LABEL;
+  /** Mesmas cores validadas do cronograma do combo. */
+  protected readonly seriesColor: Record<ServiceType, string> = { followers: '#78A416', likes: '#FF2E93', views: '#1C9FD0' };
+
+  protected pct(delivered: number, amount: number): number {
+    return Math.floor((delivered / Math.max(1, amount)) * 100);
+  }
 
   protected readonly percent = computed(() => Math.floor((this.order().delivered / this.order().amount) * 100));
 

@@ -1,4 +1,5 @@
 export * from './pricing.service';
+export * from './bundle.service';
 export * from './package-catalog.service';
 export * from './mock-order.service';
 export * from './mock-payment.service';

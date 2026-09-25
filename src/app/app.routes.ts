@@ -8,7 +8,7 @@ export const routes: Routes = [
   },
   {
     path: 'checkout',
-    title: 'Checkout seguro — Pulse Growth',
+    title: 'Finalizar compra — Pulse Growth',
     loadComponent: () => import('./features/checkout/checkout.page').then((m) => m.CheckoutPage),
   },
   {

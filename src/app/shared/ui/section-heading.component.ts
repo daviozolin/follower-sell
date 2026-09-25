@@ -30,7 +30,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class SectionHeadingComponent {
   readonly index = input.required<string>();
-  readonly total = input('04');
+  readonly total = input('06');
   readonly eyebrow = input.required<string>();
   readonly align = input<'left' | 'center'>('left');
   readonly tone = input<'default' | 'inverse'>('default');

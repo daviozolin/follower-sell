@@ -38,7 +38,7 @@ import { CheckoutStore } from '../checkout.store';
 
           <div class="relative rounded-2xl border border-line bg-canvas/50 p-4 transition-opacity" [class.opacity-30]="c.status === 'expired'">
             <app-qr-code class="block h-52 w-52 sm:h-56 sm:w-56" [payload]="c.brCode" />
-            <span class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 rounded-full border border-line bg-surface px-2.5 py-0.5 text-[10px] text-ink-faint">QR ilustrativo · mock</span>
+            <span class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 rounded-full border border-line bg-surface px-2.5 py-0.5 text-[10px] text-ink-faint">QR ilustrativo · teste</span>
           </div>
 
           <p class="text-3xl font-semibold tracking-tight">{{ c.amount | currency }}</p>
@@ -81,7 +81,7 @@ import { CheckoutStore } from '../checkout.store';
           </ol>
           <button type="button" class="btn-ghost w-full border-dashed" (click)="simulatePaid()" [disabled]="busy()">
             @if (busy()) { <app-icon name="loader" class="h-4 w-4 animate-spin" /> } @else { <app-icon name="sparkles" class="h-4 w-4 text-accent-soft" /> }
-            Simular pagamento aprovado (ambiente mock)
+            Simular pagamento aprovado (ambiente de teste)
           </button>
         }
       </div>

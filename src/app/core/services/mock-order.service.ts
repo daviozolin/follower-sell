@@ -4,7 +4,7 @@ import { CreateOrderRequest, Order, PaymentMethod } from '../models';
 import { randomId } from '../utils/format';
 import { readJson, writeJson } from '../utils/storage';
 
-const STORAGE_KEY = 'pg.orders.v2';
+const STORAGE_KEY = 'pg.orders.v3';
 const GUARANTEE_DAYS = 30;
 const DAY_MS = 86_400_000;
 
@@ -68,6 +68,7 @@ export class MockOrderService {
           delivered: 0,
           refillCount: 0,
           guaranteeUntil: null,
+          bundle: request.bundle ?? null,
         };
         this.put(order);
         return order;
@@ -158,13 +159,22 @@ export class MockOrderService {
       .subscribe(() => {
         const current = this.store()[orderId];
         const delivered = Math.min(current.amount, current.delivered + chunk);
+        // Combo: cada componente avança na mesma proporção (todos terminam juntos).
+        const bundle = current.bundle && {
+          ...current.bundle,
+          components: current.bundle.components.map((c) => ({
+            ...c,
+            delivered: Math.min(c.amount, c.delivered + Math.ceil(c.amount / ticks)),
+          })),
+        };
         if (delivered < current.amount) {
-          this.patch(orderId, { delivered });
+          this.patch(orderId, { delivered, bundle });
           return;
         }
         const now = new Date();
         this.patch(orderId, {
           delivered,
+          bundle,
           status: 'completed',
           completedAt: now.toISOString(),
           guaranteeUntil: new Date(now.getTime() + GUARANTEE_DAYS * DAY_MS).toISOString(),
@@ -232,6 +242,7 @@ export class MockOrderService {
         delivered: 1000,
         refillCount: 0,
         guaranteeUntil: new Date(now + 28 * DAY_MS).toISOString(),
+        bundle: null,
       },
       {
         id: 'PG-DEMO02',
@@ -252,6 +263,38 @@ export class MockOrderService {
         delivered: 3750,
         refillCount: 0,
         guaranteeUntil: null,
+        bundle: null,
+      },
+      {
+        id: 'PG-DEMO03',
+        customerEmail: 'demo@pulsegrowth.app',
+        targetHandle: 'atelie.norte',
+        platform: 'instagram',
+        serviceType: 'combo',
+        packageId: 'combo-growth',
+        amount: 2000,
+        totalPrice: 118.48,
+        status: 'delivering',
+        deliverySpeed: { mode: 'drip', unitsPerDay: null },
+        paymentMethod: 'pix',
+        createdAt: iso(3 * DAY_MS),
+        paidAt: iso(3 * DAY_MS - 90_000),
+        deliveryStartedAt: iso(3 * DAY_MS - 600_000),
+        completedAt: null,
+        delivered: 500,
+        refillCount: 0,
+        guaranteeUntil: null,
+        bundle: {
+          tierId: 'growth',
+          baseFollowers: 5000,
+          pace: 'natural',
+          durationDays: 20,
+          components: [
+            { service: 'followers', amount: 2000, delivered: 500, posts: null },
+            { service: 'likes', amount: 1500, delivered: 375, posts: 6 },
+            { service: 'views', amount: 7200, delivered: 1800, posts: 4 },
+          ],
+        },
       },
     ];
     this.store.set(Object.fromEntries(demo.map((o) => [o.id, o])));

@@ -6,9 +6,9 @@ import { SectionHeadingComponent } from '../../../shared/ui/section-heading.comp
 import { SegmentOption, SegmentedControlComponent } from '../../../shared/ui/segmented-control.component';
 
 const SERVICE_META: Record<ServiceType, { icon: IconName; description: string }> = {
-  followers: { icon: 'users', description: 'Perfis com foto e publicações, entregues em ritmo natural.' },
-  likes: { icon: 'heart', description: 'Engajamento distribuído na publicação escolhida.' },
-  views: { icon: 'eye', description: 'Alcance em Reels e vídeos, com retenção simulada.' },
+  followers: { icon: 'users', description: 'Perfis com foto e publicações seguindo você.' },
+  likes: { icon: 'heart', description: 'Mais curtidas na publicação que você escolher.' },
+  views: { icon: 'eye', description: 'Mais pessoas assistindo aos seus vídeos.' },
 };
 
 @Component({
@@ -18,7 +18,7 @@ const SERVICE_META: Record<ServiceType, { icon: IconName; description: string }>
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-      <app-section-heading index="01" eyebrow="Serviços">
+      <app-section-heading index="02" eyebrow="Serviços">
         <span title>Escolha a plataforma<br class="hidden sm:block" /> e o <span class="text-accent">objetivo</span>.</span>
         <span subtitle>Todos os serviços com garantia de reposição e sem acesso à conta.</span>
       </app-section-heading>

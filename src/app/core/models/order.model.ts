@@ -1,4 +1,5 @@
-import { DeliveryMode, Platform, ServiceType } from './platform.model';
+import { OrderBundle } from './bundle.model';
+import { DeliveryMode, Platform, ProductType } from './platform.model';
 
 export type OrderStatus = 'pending' | 'processing' | 'delivering' | 'completed' | 'refilling';
 export type PaymentMethod = 'pix' | 'credit_card';
@@ -15,12 +16,15 @@ export interface Order {
   /** @usuario (seguidores) ou URL da publicação (curtidas/visualizações). */
   targetHandle: string;
   platform: Platform;
-  serviceType: ServiceType;
-  /** Id do pacote de catálogo, ou `custom-*` quando veio da calculadora. */
+  serviceType: ProductType;
+  /** Id do pacote de catálogo, `custom-*` (calculadora) ou `combo-*`. */
   packageId: string;
+  /** Unidades principais (no combo: seguidores). */
   amount: number;
   totalPrice: number;
   status: OrderStatus;
+  /** Presente apenas em pedidos de combo orgânico. */
+  bundle: OrderBundle | null;
   deliverySpeed: DeliverySpeed;
   paymentMethod: PaymentMethod;
   createdAt: string;
@@ -38,12 +42,13 @@ export interface CreateOrderRequest {
   customerEmail: string;
   targetHandle: string;
   platform: Platform;
-  serviceType: ServiceType;
+  serviceType: ProductType;
   packageId: string;
   amount: number;
   totalPrice: number;
   deliverySpeed: DeliverySpeed;
   paymentMethod: PaymentMethod;
+  bundle?: OrderBundle | null;
 }
 
 export const ORDER_STATUS_LABEL: Record<OrderStatus, string> = {

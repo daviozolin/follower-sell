@@ -1,7 +1,7 @@
 import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { PLATFORM_LABEL, SERVICE_LABEL } from '../../../core/models';
+import { BUNDLE_PACE_LABEL, PLATFORM_LABEL, SERVICE_LABEL } from '../../../core/models';
 import { IconComponent } from '../../../shared/ui/icon.component';
 import { CheckoutStore } from '../checkout.store';
 
@@ -15,16 +15,20 @@ import { CheckoutStore } from '../checkout.store';
       <div class="flex items-center justify-between">
         <h2 class="font-semibold">Resumo</h2>
         @if (!store.locked()) {
-          <a routerLink="/" fragment="servicos" class="text-xs text-accent-soft hover:underline">Alterar</a>
+          <a routerLink="/" [fragment]="store.isCombo() ? 'combos' : 'servicos'" class="text-xs text-accent-soft hover:underline">Alterar</a>
         }
       </div>
 
       <div class="mt-5 flex items-center gap-3">
         <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-canvas/60">
-          <app-icon [name]="sel.platform()" class="h-5 w-5 text-accent" />
+          <app-icon [name]="store.platform()" class="h-5 w-5" [class]="store.isCombo() ? 'text-magenta' : 'text-accent'" />
         </span>
         <div>
-          <p class="font-medium">{{ sel.amount() | number }} {{ serviceLabel() }}</p>
+          @if (store.bundle(); as plan) {
+            <p class="font-medium">Combo {{ plan.tier.name }}</p>
+          } @else {
+            <p class="font-medium">{{ sel.amount() | number }} {{ serviceLabel() }}</p>
+          }
           <p class="text-xs text-ink-muted">{{ platformLabel() }}</p>
         </div>
       </div>
@@ -36,22 +40,31 @@ import { CheckoutStore } from '../checkout.store';
             <dd class="truncate font-mono text-xs">{{ store.targetKind() === 'profile' ? '@' + p.target : p.target }}</dd>
           </div>
         }
-        <div class="flex justify-between">
-          <dt class="text-ink-muted">Entrega</dt>
-          <dd>{{ sel.mode() === 'oneshot' ? 'One-shot' : 'Drip-feed · ' + (sel.unitsPerDay() | number) + '/dia' }}</dd>
-        </div>
-        <div class="flex justify-between"><dt class="text-ink-muted">Prazo</dt><dd>{{ sel.quote().estimate.label }}</dd></div>
-        @if (sel.quote().discount) {
-          <div class="flex justify-between text-accent"><dt>Desconto</dt><dd>-{{ sel.quote().discount | currency }}</dd></div>
-        }
-        @if (sel.quote().dripPremium) {
-          <div class="flex justify-between"><dt class="text-magenta-soft">Drip-feed premium</dt><dd>+{{ sel.quote().dripPremium | currency }}</dd></div>
+        @if (store.bundle(); as plan) {
+          <div class="flex justify-between"><dt class="text-ink-muted">Seguidores</dt><dd class="tabular-nums">+{{ plan.followers | number }}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Curtidas</dt><dd class="tabular-nums">+{{ plan.likes | number }}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Visualizações</dt><dd class="tabular-nums">+{{ plan.views | number }}</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Ritmo</dt><dd>{{ paceLabel() }} · {{ plan.durationDays }} dias</dd></div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Avulso</dt><dd class="line-through">{{ plan.standaloneTotal | currency }}</dd></div>
+          <div class="flex justify-between text-accent"><dt>Economia do combo</dt><dd>-{{ plan.savings | currency }}</dd></div>
+        } @else {
+          <div class="flex justify-between">
+            <dt class="text-ink-muted">Entrega</dt>
+            <dd>{{ sel.mode() === 'oneshot' ? 'Rápida' : 'Gradual · ' + (sel.unitsPerDay() | number) + '/dia' }}</dd>
+          </div>
+          <div class="flex justify-between"><dt class="text-ink-muted">Prazo</dt><dd>{{ sel.quote().estimate.label }}</dd></div>
+          @if (sel.quote().discount) {
+            <div class="flex justify-between text-accent"><dt>Desconto</dt><dd>-{{ sel.quote().discount | currency }}</dd></div>
+          }
+          @if (sel.quote().dripPremium) {
+            <div class="flex justify-between"><dt class="text-magenta-soft">Adicional entrega gradual</dt><dd>+{{ sel.quote().dripPremium | currency }}</dd></div>
+          }
         }
       </dl>
 
       <div class="mt-5 flex items-baseline justify-between border-t border-dashed border-line pt-5">
         <span class="text-sm text-ink-muted">Total</span>
-        <span class="display text-3xl tabular-nums">{{ sel.quote().total | currency }}</span>
+        <span class="display text-3xl tabular-nums">{{ store.total() | currency }}</span>
       </div>
 
       <ul class="mt-6 space-y-2 text-xs text-ink-muted">
@@ -65,6 +78,10 @@ import { CheckoutStore } from '../checkout.store';
 export class OrderSummaryComponent {
   protected readonly store = inject(CheckoutStore);
   protected readonly sel = this.store.selection;
-  protected readonly platformLabel = computed(() => PLATFORM_LABEL[this.sel.platform()]);
+  protected readonly platformLabel = computed(() => PLATFORM_LABEL[this.store.platform()]);
+  protected readonly paceLabel = computed(() => {
+    const plan = this.store.bundle();
+    return plan ? BUNDLE_PACE_LABEL[plan.pace] : '';
+  });
   protected readonly serviceLabel = computed(() => SERVICE_LABEL[this.sel.serviceType()].toLowerCase());
 }

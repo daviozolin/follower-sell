@@ -9,7 +9,7 @@ import { SectionHeadingComponent } from '../../../shared/ui/section-heading.comp
   imports: [IconComponent, SectionHeadingComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-section-heading index="03" eyebrow="Segurança & transparência" tone="inverse" align="center">
+    <app-section-heading index="05" eyebrow="Segurança & transparência" tone="inverse" align="center">
       <span title>Nunca pedimos sua senha.<br />Nunca.</span>
       <span subtitle>
         Só precisamos do seu <span class="font-mono font-semibold">&#64;usuario</span> ou do link da publicação — o mesmo que qualquer visitante vê.
@@ -52,7 +52,7 @@ import { SectionHeadingComponent } from '../../../shared/ui/section-heading.comp
 export class SecuritySectionComponent {
   protected readonly pillars: { icon: IconName; title: string; text: string }[] = [
     { icon: 'key', title: 'Zero acesso à conta', text: 'Não pedimos senha, código SMS ou login. Sua conta permanece 100% sob seu controle.' },
-    { icon: 'drip', title: 'Entrega no seu ritmo', text: 'One-shot para quem tem pressa, drip-feed para crescimento gradual — sempre respeitando limites.' },
+    { icon: 'drip', title: 'Entrega no seu ritmo', text: 'Entrega rápida para quem tem pressa, gradual para crescer aos poucos — sempre dentro dos limites das redes.' },
     { icon: 'refresh', title: 'Reposição garantida', text: 'Qualquer queda nos primeiros 30 dias é reposta automaticamente ou sob solicitação.' },
   ];
 
@@ -61,7 +61,7 @@ export class SecuritySectionComponent {
   protected readonly checklist = [
     { ok: true, text: 'Perfil público durante toda a entrega' },
     { ok: true, text: '@usuario correto e sem alterações até concluir' },
-    { ok: true, text: 'Publicação disponível (curtidas e views)' },
+    { ok: true, text: 'Publicação disponível (curtidas e visualizações)' },
     { ok: false, text: 'Nunca envie sua senha ou códigos de verificação' },
   ];
 }

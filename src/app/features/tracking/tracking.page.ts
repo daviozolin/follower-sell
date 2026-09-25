@@ -4,7 +4,8 @@ import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { catchError, map, of, switchMap, tap } from 'rxjs';
-import { Order, PLATFORM_LABEL, SERVICE_LABEL } from '../../core/models';
+import { BUNDLE_PACE_LABEL, Order, PLATFORM_LABEL, SERVICE_LABEL } from '../../core/models';
+import { BundleService } from '../../core/services/bundle.service';
 import { MockOrderService } from '../../core/services/mock-order.service';
 import { ToastService } from '../../core/services/toast.service';
 import { STRICT_EMAIL, stripUnsafe } from '../../core/validators';
@@ -62,7 +63,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
                 <app-icon [name]="o.platform" class="h-5 w-5 text-accent-soft" />
                 <div>
                   <p class="font-mono text-sm font-semibold">{{ o.id }}</p>
-                  <p class="text-xs text-ink-muted">{{ o.amount | number }} {{ serviceLabel(o) }} · {{ o.createdAt | date: 'dd/MM/yyyy' }}</p>
+                  <p class="text-xs text-ink-muted">{{ productTitle(o) }} · {{ o.createdAt | date: 'dd/MM/yyyy' }}</p>
                 </div>
               </div>
               <app-order-status-badge [status]="o.status" />
@@ -103,11 +104,11 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
                 <app-order-timeline [order]="o" />
 
                 <dl class="mt-8 grid gap-4 text-sm sm:grid-cols-4">
-                  <div><dt class="text-xs text-ink-faint">Serviço</dt><dd class="mt-1">{{ o.amount | number }} {{ serviceLabel(o) }}</dd></div>
+                  <div><dt class="text-xs text-ink-faint">Serviço</dt><dd class="mt-1">{{ productTitle(o) }}</dd></div>
                   <div><dt class="text-xs text-ink-faint">Plataforma</dt><dd class="mt-1">{{ platformLabel(o) }}</dd></div>
-                  <div><dt class="text-xs text-ink-faint">Entrega</dt><dd class="mt-1">{{ o.deliverySpeed.mode === 'oneshot' ? 'One-shot' : 'Drip-feed · ' + (o.deliverySpeed.unitsPerDay | number) + '/dia' }}</dd></div>
+                  <div><dt class="text-xs text-ink-faint">Entrega</dt><dd class="mt-1">{{ deliveryLabel(o) }}</dd></div>
                   <div><dt class="text-xs text-ink-faint">Total</dt><dd class="mt-1">{{ o.totalPrice | currency }}</dd></div>
-                  <div class="sm:col-span-4"><dt class="text-xs text-ink-faint">Destino</dt><dd class="mt-1 truncate font-mono text-xs">{{ o.serviceType === 'followers' ? '@' + o.targetHandle : o.targetHandle }}</dd></div>
+                  <div class="sm:col-span-4"><dt class="text-xs text-ink-faint">Destino</dt><dd class="mt-1 truncate font-mono text-xs">{{ o.serviceType === 'followers' || o.serviceType === 'combo' ? '@' + o.targetHandle : o.targetHandle }}</dd></div>
                 </dl>
               </div>
 
@@ -129,7 +130,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
                   }
                   <button type="button" class="btn-ghost" [disabled]="!!refillBlock()" (click)="refillOpen.set(true)">
                     <app-icon name="refresh" class="h-4 w-4" [class.animate-spin]="o.status === 'refilling'" />
-                    {{ o.status === 'refilling' ? 'Reposição em andamento' : 'Solicitar reposição (refill)' }}
+                    {{ o.status === 'refilling' ? 'Reposição em andamento' : 'Solicitar reposição' }}
                   </button>
                 </div>
               </footer>
@@ -137,7 +138,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
 
             <app-modal [open]="refillOpen()" title="Solicitar reposição" (closed)="refillOpen.set(false)">
               <p class="text-sm leading-relaxed text-ink-muted">
-                Vamos verificar a contagem atual de <span class="font-mono text-ink">{{ o.serviceType === 'followers' ? '@' + o.targetHandle : 'sua publicação' }}</span>
+                Vamos verificar a contagem atual de <span class="font-mono text-ink">{{ o.serviceType === 'followers' || o.serviceType === 'combo' ? '@' + o.targetHandle : 'sua publicação' }}</span>
                 e repor automaticamente qualquer queda em relação às {{ o.amount | number }} unidades entregues.
               </p>
               <ul class="mt-4 space-y-2 text-sm text-ink-muted">
@@ -159,6 +160,7 @@ type LoadState = 'idle' | 'loading' | 'ready' | 'not_found';
 })
 export class TrackingPage {
   private readonly orders = inject(MockOrderService);
+  private readonly bundles = inject(BundleService);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
   private readonly fb = inject(NonNullableFormBuilder);
@@ -261,7 +263,17 @@ export class TrackingPage {
   }
 
   protected serviceLabel(o: Order): string {
-    return SERVICE_LABEL[o.serviceType].toLowerCase();
+    return o.serviceType === 'combo' ? 'seguidores + curtidas + visualizações' : SERVICE_LABEL[o.serviceType].toLowerCase();
+  }
+
+  protected productTitle(o: Order): string {
+    if (o.bundle) return `Combo ${this.bundles.tierById(o.bundle.tierId).name}`;
+    return `${o.amount.toLocaleString('pt-BR')} ${this.serviceLabel(o)}`;
+  }
+
+  protected deliveryLabel(o: Order): string {
+    if (o.bundle) return `${BUNDLE_PACE_LABEL[o.bundle.pace]} · ${o.bundle.durationDays} dias`;
+    return o.deliverySpeed.mode === 'oneshot' ? 'Rápida' : `Gradual · ${o.deliverySpeed.unitsPerDay?.toLocaleString('pt-BR')}/dia`;
   }
 
   protected platformLabel(o: Order): string {

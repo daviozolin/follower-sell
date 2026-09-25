@@ -15,7 +15,7 @@ interface FaqItem {
   template: `
     <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div class="lg:sticky lg:top-28 lg:self-start">
-        <app-section-heading index="04" eyebrow="FAQ">
+        <app-section-heading index="06" eyebrow="Dúvidas">
           <span title>Perguntas <span class="text-magenta">sem</span> letras miúdas.</span>
           <span subtitle>Riscos, prazos e garantias explicados de forma direta.</span>
         </app-section-heading>
@@ -53,20 +53,20 @@ export class FaqSectionComponent {
 
   protected readonly items: FaqItem[] = [
     {
-      q: 'Por que o drip-feed custa mais que o one-shot?',
-      a: 'No drip-feed a entrega é fracionada em lotes agendados ao longo de dias, com monitoramento contínuo e ajuste de ritmo. Isso exige mais orquestração do que entregar tudo de uma vez — em troca, o crescimento parece orgânico e o risco é menor.',
+      q: 'Por que a entrega gradual custa mais que a rápida?',
+      a: 'Na entrega gradual, dividimos o pedido em pequenas partes e entregamos um pouco por dia, acompanhando e ajustando o ritmo o tempo todo. Dá mais trabalho do que entregar tudo de uma vez — em troca, o crescimento parece natural e é mais discreto.',
     },
     {
       q: 'Meu perfil pode ser banido?',
-      a: 'Não pedimos senha nem acesso, então não há login suspeito na sua conta. A entrega gradual (drip-feed) respeita ritmos compatíveis com crescimento orgânico, o que reduz drasticamente sinais de atividade atípica.',
+      a: 'Não pedimos senha nem acesso, então não há login suspeito na sua conta. A entrega gradual respeita ritmos compatíveis com crescimento orgânico, o que reduz drasticamente sinais de atividade atípica.',
     },
     {
-      q: 'E o shadowban?',
-      a: 'Shadowban costuma estar ligado a automações na própria conta, hashtags proibidas ou denúncias. Como nada é executado de dentro do seu perfil, o risco é mínimo. Para perfis novos, recomendamos o modo orgânico com ritmo diário baixo.',
+      q: 'Meu perfil pode ficar escondido (shadowban)?',
+      a: 'Shadowban é quando a rede esconde seus posts sem avisar. Isso costuma estar ligado a automações na própria conta, hashtags proibidas ou denúncias. Como nada é executado de dentro do seu perfil, o risco é mínimo. Para perfis novos, recomendamos o modo orgânico com ritmo diário baixo.',
     },
     {
       q: 'Quanto tempo leva para começar?',
-      a: 'No one-shot, a entrega inicia em até 15 minutos após a aprovação do pagamento e termina em poucas horas. No drip-feed, inicia em até 1 hora e segue o ritmo diário escolhido. Pix é aprovado em segundos; cartão, em até 2 minutos.',
+      a: 'Na entrega rápida, começamos em até 15 minutos após o pagamento e terminamos em poucas horas. Na gradual, começamos em até 1 hora e entregamos um pouco por dia, no ritmo escolhido. Pix é aprovado em segundos; cartão, em até 2 minutos.',
     },
     {
       q: 'Como funciona a reposição?',
