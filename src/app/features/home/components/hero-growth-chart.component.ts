@@ -12,7 +12,7 @@ const CURVE = 'M0 135 C40 128 70 118 105 104 S170 76 210 60 S280 30 320 20';
  *  1. a curva de crescimento gradual se desenha da esquerda para a direita;
  *  2. área e "pico artificial" são revelados em sincronia;
  *  3. o contador sobe até o total e depois segue "ao vivo" com pequenos incrementos.
- * Com `prefers-reduced-motion`, tudo aparece pronto (regra global em styles.scss + checagem abaixo).
+ * Com `prefers-reduced-motion`, tudo aparece pronto e estático (regra global em styles.scss + checagem abaixo).
  */
 @Component({
   selector: 'app-hero-growth-chart',
@@ -110,8 +110,7 @@ export class HeroGrowthChartComponent {
       };
 
       if (reduced) {
-        this.count.set(TARGET);
-        startLive();
+        this.count.set(TARGET); // sem contagem nem incrementos "ao vivo"
       } else {
         const start = performance.now() + 300; // acompanha o atraso do desenho
         const tick = (now: number) => {

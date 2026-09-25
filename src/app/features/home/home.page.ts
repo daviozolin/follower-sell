@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AnimatedBackgroundComponent } from '../../shared/three/animated-background.component';
 import { MarqueeComponent } from '../../shared/ui/marquee.component';
 import { ComboSectionComponent } from './sections/combo-section.component';
 import { HowItWorksSectionComponent } from './sections/how-it-works-section.component';
@@ -11,8 +12,9 @@ import { ServiceSelectorComponent } from './sections/service-selector.component'
 
 /**
  * Cada seção tem uma identidade visual própria, para o ritmo da página ficar claro:
- *  hero (grid + glows) → faixa magenta → como funciona → serviços (canvas) → combos (diagonal magenta)
+ *  hero (onda de partículas 3D) → faixa magenta → como funciona → serviços (canvas) → combos (diagonal magenta)
  *  → calculadora (banda com pontos)
+ *  Fundos animados (Three.js) só no hero, combos, segurança e dúvidas — seções de leitura ficam calmas.
  *  → segurança (limão, invertida) → FAQ (canvas com acento magenta).
  */
 @Component({
@@ -21,6 +23,7 @@ import { ServiceSelectorComponent } from './sections/service-selector.component'
   imports: [
     HeroSectionComponent,
     MarqueeComponent,
+    AnimatedBackgroundComponent,
     HowItWorksSectionComponent,
     ServiceSelectorComponent,
     PackageGridComponent,
@@ -51,7 +54,7 @@ import { ServiceSelectorComponent } from './sections/service-selector.component'
     <!-- Combos: faixa escura com diagonal magenta, identidade "premium" -->
     <section id="combos" class="relative scroll-mt-16 overflow-hidden border-y border-magenta/25 bg-surface/60 py-24 lg:py-32">
       <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgb(var(--color-magenta)/0.14)_0%,transparent_45%)]"></div>
-      <div aria-hidden="true" class="pointer-events-none absolute -left-32 -top-24 h-96 w-96 rounded-full bg-magenta/20 blur-[120px]"></div>
+      <app-animated-bg variant="aurora" [colors]="['#FF2E93', '#FF80BE']" [opacity]="0.4" [speed]="0.9" />
       <div class="container-page relative">
         <app-combo-section />
       </div>
@@ -63,14 +66,17 @@ import { ServiceSelectorComponent } from './sections/service-selector.component'
       </div>
     </section>
 
-    <section id="seguranca" class="scroll-mt-16 bg-accent py-24 text-accent-ink lg:py-32">
-      <div class="container-page">
+    <section id="seguranca" class="relative scroll-mt-16 overflow-hidden bg-accent py-24 text-accent-ink lg:py-32">
+      <app-animated-bg variant="aurora" [colors]="['#0C0E04', '#FFFFFF']" [opacity]="0.12" [speed]="0.7" />
+      <div class="container-page relative">
         <app-security-section />
       </div>
     </section>
 
     <section id="faq" class="relative scroll-mt-16 overflow-hidden py-24 lg:py-32">
       <div aria-hidden="true" class="pointer-events-none absolute -right-40 top-20 h-96 w-96 rounded-full bg-magenta/15 blur-[120px]"></div>
+      <app-animated-bg variant="wave" [colors]="['#FF2E93', '#FF80BE']" [opacity]="0.4" [density]="0.6" [speed]="0.6"
+                       class="[mask-image:linear-gradient(to_bottom,transparent,#000_60%)]" />
       <div class="container-page relative">
         <app-faq-section />
       </div>
