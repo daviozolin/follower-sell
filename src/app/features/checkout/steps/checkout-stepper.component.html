@@ -1,0 +1,16 @@
+<ol class="flex items-center gap-2" aria-label="Etapas do checkout">
+  @for (s of steps; track s.id; let i = $index; let last = $last) {
+    @let done = i < store.stepIndex();
+    @let current = i === store.stepIndex();
+    <li class="flex flex-1 items-center gap-2" [attr.aria-current]="current ? 'step' : null">
+      <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-semibold transition-all duration-300"
+            [class]="done ? 'border-success bg-success text-canvas' : current ? 'border-accent bg-accent/15 text-accent-soft shadow-glow' : 'border-line text-ink-faint'">
+        @if (done) { <app-icon name="check" class="h-4 w-4" [stroke]="3" /> } @else { {{ i + 1 }} }
+      </span>
+      <span class="hidden text-sm sm:inline" [class.text-ink]="current || done" [class.text-ink-faint]="!current && !done">{{ s.label }}</span>
+      @if (!last) {
+        <span class="h-px flex-1 transition-colors duration-500" [class]="done ? 'bg-success/60' : 'bg-line'"></span>
+      }
+    </li>
+  }
+</ol>

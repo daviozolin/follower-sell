@@ -1,0 +1,36 @@
+<header class="sticky top-0 z-40 border-b border-line/60 bg-canvas/80 backdrop-blur-xl">
+  <div class="container-page flex h-16 items-center justify-between gap-6">
+    <a routerLink="/" class="flex items-center gap-2.5" aria-label="Pulse Growth — início">
+      <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-accent">
+        <app-icon name="trending" class="h-4 w-4 text-accent-ink" [stroke]="2.6" />
+      </span>
+      <span class="font-display text-lg font-extrabold tracking-[-0.03em]">pulse<span class="text-magenta">.</span></span>
+    </a>
+
+    <nav class="hidden items-center gap-1 text-sm text-ink-muted md:flex" aria-label="Principal">
+      @for (link of links; track link.fragment) {
+        <a routerLink="/" [fragment]="link.fragment" class="rounded-lg px-3 py-2 transition-colors hover:bg-surface-raised/60 hover:text-ink">{{ link.label }}</a>
+      }
+      <a routerLink="/rastreio" routerLinkActive="text-ink" class="rounded-lg px-3 py-2 transition-colors hover:bg-surface-raised/60 hover:text-ink">Rastrear pedido</a>
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a routerLink="/" fragment="servicos" class="btn-primary hidden !py-2 sm:inline-flex">Começar</a>
+      <button type="button" class="rounded-lg p-2 text-ink-muted hover:bg-surface-raised md:hidden"
+              [attr.aria-expanded]="menuOpen()" aria-controls="mobile-nav" aria-label="Abrir menu" (click)="menuOpen.set(!menuOpen())">
+        <app-icon [name]="menuOpen() ? 'x' : 'chevron-down'" class="h-5 w-5" />
+      </button>
+    </div>
+  </div>
+
+  @if (menuOpen()) {
+    <nav id="mobile-nav" class="container-page animate-fade-up pb-4 md:hidden" aria-label="Principal (mobile)">
+      <div class="card flex flex-col p-2 text-sm">
+        @for (link of links; track link.fragment) {
+          <a routerLink="/" [fragment]="link.fragment" (click)="menuOpen.set(false)" class="rounded-lg px-3 py-2.5 hover:bg-surface-raised">{{ link.label }}</a>
+        }
+        <a routerLink="/rastreio" (click)="menuOpen.set(false)" class="rounded-lg px-3 py-2.5 hover:bg-surface-raised">Rastrear pedido</a>
+      </div>
+    </nav>
+  }
+</header>

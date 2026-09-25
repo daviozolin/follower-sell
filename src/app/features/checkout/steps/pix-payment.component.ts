@@ -15,78 +15,7 @@ import { CheckoutStore } from '../checkout.store';
   standalone: true,
   imports: [CurrencyPipe, IconComponent, BadgeComponent, QrCodeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    @if (charge(); as c) {
-      <div class="space-y-6 text-center">
-        <div>
-          <h2 class="font-display text-2xl font-bold tracking-tight">Pague com Pix</h2>
-          <p class="mt-1 text-sm text-ink-muted">Escaneie o QR Code ou use o código "copia e cola" no app do seu banco.</p>
-        </div>
-
-        <div class="flex flex-col items-center gap-4">
-          @switch (c.status) {
-            @case ('awaiting') {
-              <app-badge tone="warning" [dot]="true" [pulse]="true">Aguardando pagamento…</app-badge>
-            }
-            @case ('paid') {
-              <app-badge tone="success" [dot]="true">Pagamento confirmado</app-badge>
-            }
-            @case ('expired') {
-              <app-badge tone="danger" [dot]="true">Código expirado</app-badge>
-            }
-          }
-
-          <div class="relative rounded-2xl border border-line bg-canvas/50 p-4 transition-opacity" [class.opacity-30]="c.status === 'expired'">
-            <app-qr-code class="block h-52 w-52 sm:h-56 sm:w-56" [payload]="c.brCode" />
-            <span class="absolute -bottom-2.5 left-1/2 -translate-x-1/2 rounded-full border border-line bg-surface px-2.5 py-0.5 text-[10px] text-ink-faint">QR ilustrativo · teste</span>
-          </div>
-
-          <p class="text-3xl font-semibold tracking-tight">{{ c.amount | currency }}</p>
-
-          @if (c.status === 'awaiting') {
-            <div class="flex items-center gap-2 text-sm" [class.text-warning]="secondsLeft() < 120" [class.text-ink-muted]="secondsLeft() >= 120">
-              <app-icon name="clock" class="h-4 w-4" />
-              Expira em <span class="font-mono text-lg font-semibold tabular-nums">{{ countdown() }}</span>
-            </div>
-            <div class="h-1 w-full max-w-xs overflow-hidden rounded-full bg-line">
-              <div class="h-full rounded-full bg-accent transition-[width] duration-1000 ease-linear" [style.width.%]="progress()"></div>
-            </div>
-          }
-        </div>
-
-        @if (c.status !== 'expired') {
-          <div class="text-left">
-            <label class="label" for="brcode">Pix copia e cola</label>
-            <div class="flex gap-2">
-              <input id="brcode" readonly class="input truncate font-mono text-xs" [value]="c.brCode" (focus)="selectAll($event)" />
-              <button type="button" (click)="copy(c.brCode)" class="btn shrink-0 border transition-all duration-300"
-                      [class]="copied() ? 'border-success/50 bg-success/15 text-success' : 'border-line bg-surface-raised text-ink hover:border-accent/60'"
-                      [attr.aria-label]="copied() ? 'Código copiado' : 'Copiar código Pix'">
-                <app-icon [name]="copied() ? 'check' : 'copy'" class="h-4 w-4" [stroke]="copied() ? 2.6 : 1.8" />
-                <span class="hidden sm:inline">{{ copied() ? 'Copiado!' : 'Copiar' }}</span>
-              </button>
-            </div>
-          </div>
-        }
-
-        @if (c.status === 'expired') {
-          <button type="button" class="btn-primary w-full" (click)="regenerate()" [disabled]="busy()">
-            <app-icon name="refresh" class="h-4 w-4" /> Gerar novo código
-          </button>
-        } @else if (c.status === 'awaiting') {
-          <ol class="space-y-2 rounded-xl border border-line bg-canvas/40 p-4 text-left text-sm text-ink-muted">
-            <li>1. Abra o app do seu banco e escolha <strong class="text-ink">Pix → Pagar</strong>.</li>
-            <li>2. Escaneie o QR Code ou cole o código.</li>
-            <li>3. Confirme — a aprovação aparece aqui automaticamente.</li>
-          </ol>
-          <button type="button" class="btn-ghost w-full border-dashed" (click)="simulatePaid()" [disabled]="busy()">
-            @if (busy()) { <app-icon name="loader" class="h-4 w-4 animate-spin" /> } @else { <app-icon name="sparkles" class="h-4 w-4 text-accent-soft" /> }
-            Simular pagamento aprovado (ambiente de teste)
-          </button>
-        }
-      </div>
-    }
-  `,
+  templateUrl: './pix-payment.component.html',
 })
 export class PixPaymentComponent {
   private readonly store = inject(CheckoutStore);

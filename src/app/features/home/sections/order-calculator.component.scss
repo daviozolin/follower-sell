@@ -1,0 +1,7 @@
+.range { appearance: none; height: 6px; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(90deg, rgb(var(--color-accent)) var(--fill), rgb(var(--color-line)) var(--fill)); }
+.range::-webkit-slider-thumb { appearance: none; width: 22px; height: 22px; border-radius: 999px; background: #fff;
+  border: 4px solid rgb(var(--color-accent)); box-shadow: 0 0 0 6px rgb(var(--color-accent) / 0.2); transition: transform .15s; }
+.range::-webkit-slider-thumb:hover { transform: scale(1.12); }
+.range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 999px; background: #fff;
+  border: 4px solid rgb(var(--color-accent)); box-shadow: 0 0 0 6px rgb(var(--color-accent) / 0.2); }

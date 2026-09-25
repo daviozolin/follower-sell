@@ -46,14 +46,7 @@ export type IconName = keyof typeof ICONS;
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'inline-block shrink-0', 'aria-hidden': 'true' },
-  template: `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="stroke()"
-         stroke-linecap="round" stroke-linejoin="round" class="h-full w-full">
-      @for (d of paths(); track $index) {
-        <path [attr.d]="d" />
-      }
-    </svg>
-  `,
+  templateUrl: './icon.component.html',
 })
 export class IconComponent {
   readonly name = input.required<IconName>();

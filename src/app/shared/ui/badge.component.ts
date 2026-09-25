@@ -15,20 +15,7 @@ const TONES: Record<BadgeTone, string> = {
   selector: 'app-badge',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <span class="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-1 text-[11px] font-semibold tracking-wide"
-          [class]="toneClass()">
-      @if (dot()) {
-        <span class="relative flex h-1.5 w-1.5">
-          @if (pulse()) {
-            <span class="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-current"></span>
-          }
-          <span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-current"></span>
-        </span>
-      }
-      <ng-content />
-    </span>
-  `,
+  templateUrl: './badge.component.html',
 })
 export class BadgeComponent {
   readonly tone = input<BadgeTone>('neutral');

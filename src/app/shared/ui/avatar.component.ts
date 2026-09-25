@@ -5,10 +5,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   selector: 'app-avatar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <span class="flex h-full w-full items-center justify-center rounded-full text-lg font-semibold text-white ring-2 ring-accent/40 ring-offset-2 ring-offset-surface"
-          [style.background]="background()">{{ initials() }}</span>
-  `,
+  templateUrl: './avatar.component.html',
 })
 export class AvatarComponent {
   readonly name = input.required<string>();

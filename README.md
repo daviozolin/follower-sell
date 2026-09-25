@@ -30,6 +30,11 @@ npm start          # http://localhost:4200
 npm run build
 ```
 
+## Convenção de arquivos
+
+Cada componente/página tem `.ts` (lógica), `.html` (template) e `.scss` apenas quando há estilo próprio além do Tailwind
+(ex.: `order-calculator.component.scss`, `hero-growth-chart.component.scss`). O `angular.json` já gera nesse formato.
+
 ## Árvore de diretórios
 
 ```

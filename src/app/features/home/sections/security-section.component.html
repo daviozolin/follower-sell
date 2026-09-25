@@ -1,0 +1,38 @@
+<app-section-heading index="05" eyebrow="Segurança & transparência" tone="inverse" align="center">
+  <span title>Nunca pedimos sua senha.<br /><span class="title-accent">Nunca.</span></span>
+  <span subtitle>
+    Só precisamos do seu <span class="font-mono font-semibold">&#64;usuario</span> ou do link da publicação — o mesmo que qualquer visitante vê.
+    Se alguém pedir sua senha em nosso nome, é golpe.
+  </span>
+</app-section-heading>
+
+<div class="mt-14 grid gap-4 md:grid-cols-3">
+  @for (pillar of pillars; track pillar.title; let i = $index) {
+    <div class="group rounded-3xl bg-canvas p-7 text-ink transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
+         [class]="tilt[i]">
+      <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent text-accent-ink">
+        <app-icon [name]="pillar.icon" class="h-6 w-6" [stroke]="2" />
+      </span>
+      <h3 class="mt-6 font-display text-2xl font-bold tracking-tight">{{ pillar.title }}</h3>
+      <p class="mt-2 text-sm leading-relaxed text-ink-muted">{{ pillar.text }}</p>
+    </div>
+  }
+</div>
+
+<div class="mt-4 grid gap-8 rounded-3xl border-2 border-accent-ink p-7 sm:p-10 md:grid-cols-[1fr_1.3fr]">
+  <div>
+    <h3 class="font-display text-3xl font-extrabold tracking-tight">Checklist antes de comprar</h3>
+    <p class="mt-3 text-sm text-accent-ink/70">Para a entrega rodar sem interrupções, seu perfil precisa atender:</p>
+  </div>
+  <ul class="grid gap-3 sm:grid-cols-2">
+    @for (item of checklist; track item.text) {
+      <li class="flex items-start gap-3 rounded-2xl bg-accent-ink/[0.07] p-4 text-sm font-medium">
+        <span class="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full"
+              [class]="item.ok ? 'bg-accent-ink text-accent' : 'bg-magenta text-white'">
+          <app-icon [name]="item.ok ? 'check' : 'x'" class="h-3 w-3" [stroke]="3.2" />
+        </span>
+        <span>{{ item.text }}</span>
+      </li>
+    }
+  </ul>
+</div>

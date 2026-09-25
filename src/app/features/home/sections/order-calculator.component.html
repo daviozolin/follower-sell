@@ -1,0 +1,96 @@
+<app-section-heading index="04" eyebrow="Calculadora">
+  <span title>Quantidade exata.<br /><span class="title-accent text-magenta">Preço na hora.</span></span>
+  <span subtitle>{{ platformLabel() }} · {{ serviceLabel() }} — altere plataforma e serviço no seletor acima.</span>
+</app-section-heading>
+
+<div class="mt-12 grid overflow-hidden rounded-3xl border border-line bg-surface shadow-card lg:grid-cols-[1.35fr_1fr]">
+  <div class="p-6 sm:p-10">
+    <div>
+      <div class="flex items-end justify-between gap-4">
+        <label for="calc-amount" class="label !mb-0">Quantidade</label>
+        <div class="flex items-center gap-2">
+          <input id="calc-amount" type="number" inputmode="numeric" class="input w-32 !py-2 text-right font-mono"
+                 [min]="limits().min" [max]="limits().max" [step]="limits().step"
+                 [value]="store.amount()" (change)="onAmountInput($event)" />
+        </div>
+      </div>
+      <input type="range" class="range mt-5 w-full" aria-label="Quantidade (slider)"
+             [min]="0" [max]="sliderSteps" [value]="sliderPosition()" (input)="onSlider($event)"
+             [style.--fill]="(sliderPosition() / sliderSteps) * 100 + '%'" />
+      <div class="mt-2 flex justify-between font-mono text-[11px] text-ink-faint">
+        <span>{{ limits().min | number }}</span><span>{{ limits().max | number }}</span>
+      </div>
+    </div>
+
+    <fieldset class="mt-8">
+      <legend class="label">Velocidade</legend>
+      <div class="grid gap-3 sm:grid-cols-2">
+        @for (opt of speedOptions; track opt.value) {
+          @let active = store.mode() === opt.value;
+          <button type="button" (click)="store.setMode(opt.value)" [attr.aria-pressed]="active"
+                  class="rounded-xl border p-4 text-left transition-all duration-200"
+                  [class]="active ? 'border-accent bg-accent/10 shadow-glow' : 'border-line bg-canvas/40 hover:border-accent/40'">
+            <span class="flex items-center gap-2 font-medium">
+              <app-icon [name]="opt.icon" class="h-4 w-4" [class.text-accent]="active" /> {{ opt.label }}
+              @if (opt.premium) {
+                <span class="ml-auto whitespace-nowrap rounded bg-magenta px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">Mais natural</span>
+              }
+            </span>
+            <span class="mt-1 block text-xs text-ink-muted">{{ opt.description }}</span>
+          </button>
+        }
+      </div>
+    </fieldset>
+
+    @if (store.mode() === 'drip') {
+      <div class="mt-6 animate-fade-up">
+        <p class="label flex items-center gap-1.5">
+          Ritmo diário
+          <app-tooltip text="Quanto menor o ritmo, mais natural o crescimento aparenta. Recomendamos no máximo 10% da base atual por dia." />
+        </p>
+        <div class="flex flex-wrap gap-2">
+          @for (rate of store.dripPresets(); track rate) {
+            <button type="button" (click)="store.setUnitsPerDay(rate)"
+                    class="rounded-lg border px-3 py-1.5 font-mono text-xs transition-colors"
+                    [class]="store.unitsPerDay() === rate ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-muted hover:border-ink-faint'">
+              {{ rate | number }}/dia
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Resumo invertido: fundo limão, texto escuro -->
+  <aside class="flex flex-col bg-accent p-6 text-accent-ink sm:p-10" aria-live="polite">
+    <p class="font-mono text-[11px] uppercase tracking-[0.22em] text-accent-ink/60">Resumo</p>
+    <dl class="mt-5 space-y-3 text-sm">
+      <div class="flex justify-between"><dt class="text-accent-ink/70">{{ quote().amount | number }} × {{ quote().unitPricePerThousand | currency }}/mil</dt><dd class="font-medium">{{ quote().subtotal | currency }}</dd></div>
+      @if (quote().discount) {
+        <div class="flex justify-between"><dt class="text-accent-ink/70">Desconto por volume ({{ quote().discountPct }}%)</dt><dd class="font-medium">-{{ quote().discount | currency }}</dd></div>
+      }
+      @if (quote().dripPremium) {
+        <div class="flex justify-between"><dt class="text-accent-ink/70">Adicional entrega gradual (+{{ premiumPct }}%)</dt><dd class="font-medium">+{{ quote().dripPremium | currency }}</dd></div>
+      }
+    </dl>
+    <div class="my-6 border-t-2 border-dashed border-accent-ink/20"></div>
+    <p class="text-sm text-accent-ink/70">Total</p>
+    <p class="display mt-1 text-5xl tabular-nums sm:text-6xl">{{ quote().total | currency }}</p>
+    <div class="mt-6 grid grid-cols-2 gap-3 text-sm">
+      <div class="rounded-xl bg-accent-ink/[0.07] p-3">
+        <p class="flex items-center gap-1.5 text-xs text-accent-ink/60"><app-icon name="clock" class="h-3.5 w-3.5" /> Conclusão</p>
+        <p class="mt-1 font-semibold">{{ quote().estimate.label }}</p>
+      </div>
+      <div class="rounded-xl bg-accent-ink/[0.07] p-3">
+        <p class="flex items-center gap-1.5 text-xs text-accent-ink/60"><app-icon name="zap" class="h-3.5 w-3.5" /> Início</p>
+        <p class="mt-1 font-semibold">{{ quote().estimate.startsIn }}</p>
+      </div>
+    </div>
+    <p class="mt-5 flex items-center gap-2 text-xs font-medium text-accent-ink/70">
+      <app-icon name="shield" class="h-4 w-4" /> Garantia 30 dias · Sem senha
+    </p>
+    <button type="button" class="btn mt-8 w-full bg-canvas text-ink hover:bg-surface-raised hover:shadow-brutal active:scale-[0.98]" (click)="checkout()">
+      Continuar para o pagamento <app-icon name="arrow-right" class="h-4 w-4" />
+    </button>
+  </aside>
+</div>

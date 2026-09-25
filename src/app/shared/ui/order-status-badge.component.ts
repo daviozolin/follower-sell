@@ -15,7 +15,7 @@ const TONE: Record<OrderStatus, BadgeTone> = {
   standalone: true,
   imports: [BadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<app-badge [tone]="tone()" [dot]="true" [pulse]="live()">{{ label() }}</app-badge>`,
+  templateUrl: './order-status-badge.component.html',
 })
 export class OrderStatusBadgeComponent {
   readonly status = input.required<OrderStatus>();

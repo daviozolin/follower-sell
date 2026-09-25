@@ -42,8 +42,7 @@ function webglAvailable(): boolean {
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { class: 'pointer-events-none absolute inset-0 overflow-hidden', 'aria-hidden': 'true' },
-  template: `<canvas #canvas class="block h-full w-full transition-opacity duration-[1500ms] ease-out"
-                     [class.opacity-0]="!ready()" [class.opacity-100]="ready()"></canvas>`,
+  templateUrl: './animated-background.component.html',
 })
 export class AnimatedBackgroundComponent {
   readonly variant = input<BackgroundVariant>('wave');

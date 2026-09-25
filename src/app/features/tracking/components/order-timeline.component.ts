@@ -27,69 +27,7 @@ const COMPLETED_STEPS: Record<OrderStatus, number> = {
   standalone: true,
   imports: [DatePipe, DecimalPipe, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <ol class="relative grid gap-6 md:grid-cols-4 md:gap-3">
-      @for (step of steps(); track step.label; let last = $last) {
-        <li class="relative flex gap-4 md:flex-col md:items-center md:text-center">
-          <!-- conector -->
-          @if (!last) {
-            <span aria-hidden="true"
-                  class="absolute left-[19px] top-11 h-[calc(100%-1.25rem)] w-0.5 md:left-[calc(50%+1.75rem)] md:top-5 md:h-0.5 md:w-[calc(100%-3.5rem+0.75rem)]"
-                  [class]="step.state === 'done' ? 'bg-success/70' : 'bg-line'"></span>
-          }
-          <span class="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 transition-all duration-500"
-                [class]="step.state === 'done' ? 'border-success bg-success text-canvas'
-                       : step.state === 'current' ? 'border-accent bg-accent/15 text-accent-soft shadow-glow'
-                       : 'border-line bg-surface text-ink-faint'">
-            @if (step.state === 'current') {
-              <span class="absolute inset-0 animate-pulse-ring rounded-full border-2 border-accent"></span>
-            }
-            <app-icon [name]="step.state === 'done' ? 'check' : step.icon" class="h-4 w-4" [stroke]="step.state === 'done' ? 3 : 1.8" />
-          </span>
-          <div class="pb-1 md:mt-3">
-            <p class="font-medium" [class.text-ink-faint]="step.state === 'upcoming'">{{ step.label }}</p>
-            <p class="mt-0.5 text-xs text-ink-muted">
-              @if (step.at) { {{ step.at | date: "dd/MM 'às' HH:mm" }} } @else { {{ step.hint }} }
-            </p>
-          </div>
-        </li>
-      }
-    </ol>
-
-    @if (order().status === 'delivering' || order().status === 'processing') {
-      @if (order().bundle; as bundle) {
-        <div class="mt-8 space-y-4 rounded-xl border border-line bg-canvas/40 p-4">
-          <p class="text-sm text-ink-muted">Progresso por componente</p>
-          @for (c of bundle.components; track c.service) {
-            <div>
-              <div class="flex justify-between text-xs">
-                <span class="flex items-center gap-1.5"><span class="h-2 w-2 rounded-sm" [style.background]="seriesColor[c.service]"></span>{{ serviceLabel[c.service] }}</span>
-                <span class="font-mono tabular-nums text-ink-muted">{{ c.delivered | number }} / {{ c.amount | number }}</span>
-              </div>
-              <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar"
-                   [attr.aria-label]="serviceLabel[c.service]" [attr.aria-valuenow]="pct(c.delivered, c.amount)" aria-valuemin="0" aria-valuemax="100">
-                <div class="h-full rounded-full transition-[width] duration-700 ease-out"
-                     [style.width.%]="pct(c.delivered, c.amount)" [style.background]="seriesColor[c.service]"></div>
-              </div>
-            </div>
-          }
-        </div>
-      } @else {
-      <div class="mt-8 rounded-xl border border-line bg-canvas/40 p-4">
-        <div class="flex justify-between text-sm">
-          <span class="text-ink-muted">Progresso da entrega</span>
-          <span class="font-mono tabular-nums">{{ order().delivered | number }} / {{ order().amount | number }}</span>
-        </div>
-        <div class="mt-3 h-2 overflow-hidden rounded-full bg-line" role="progressbar" [attr.aria-valuenow]="percent()" aria-valuemin="0" aria-valuemax="100">
-          <div class="relative h-full rounded-full bg-gradient-to-r from-magenta to-accent transition-[width] duration-700 ease-out" [style.width.%]="percent()">
-            <span class="absolute inset-0 animate-pulse bg-white/20"></span>
-          </div>
-        </div>
-        <p class="mt-2 text-right text-xs text-ink-faint">{{ percent() }}%</p>
-      </div>
-      }
-    }
-  `,
+  templateUrl: './order-timeline.component.html',
 })
 export class OrderTimelineComponent {
   readonly order = input.required<Order>();

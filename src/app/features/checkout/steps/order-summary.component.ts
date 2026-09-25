@@ -10,70 +10,7 @@ import { CheckoutStore } from '../checkout.store';
   standalone: true,
   imports: [CurrencyPipe, DecimalPipe, RouterLink, IconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <aside class="card p-6 lg:sticky lg:top-24" aria-label="Resumo do pedido">
-      <div class="flex items-center justify-between">
-        <h2 class="font-semibold">Resumo</h2>
-        @if (!store.locked()) {
-          <a routerLink="/" [fragment]="store.isCombo() ? 'combos' : 'servicos'" class="text-xs text-accent-soft hover:underline">Alterar</a>
-        }
-      </div>
-
-      <div class="mt-5 flex items-center gap-3">
-        <span class="flex h-10 w-10 items-center justify-center rounded-xl border border-line bg-canvas/60">
-          <app-icon [name]="store.platform()" class="h-5 w-5" [class]="store.isCombo() ? 'text-magenta' : 'text-accent'" />
-        </span>
-        <div>
-          @if (store.bundle(); as plan) {
-            <p class="font-medium">Combo {{ plan.tier.name }}</p>
-          } @else {
-            <p class="font-medium">{{ sel.amount() | number }} {{ serviceLabel() }}</p>
-          }
-          <p class="text-xs text-ink-muted">{{ platformLabel() }}</p>
-        </div>
-      </div>
-
-      <dl class="mt-5 space-y-2.5 border-t border-line/70 pt-5 text-sm">
-        @if (store.profile(); as p) {
-          <div class="flex justify-between gap-4">
-            <dt class="text-ink-muted">Destino</dt>
-            <dd class="truncate font-mono text-xs">{{ store.targetKind() === 'profile' ? '@' + p.target : p.target }}</dd>
-          </div>
-        }
-        @if (store.bundle(); as plan) {
-          <div class="flex justify-between"><dt class="text-ink-muted">Seguidores</dt><dd class="tabular-nums">+{{ plan.followers | number }}</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-muted">Curtidas</dt><dd class="tabular-nums">+{{ plan.likes | number }}</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-muted">Visualizações</dt><dd class="tabular-nums">+{{ plan.views | number }}</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-muted">Ritmo</dt><dd>{{ paceLabel() }} · {{ plan.durationDays }} dias</dd></div>
-          <div class="flex justify-between"><dt class="text-ink-muted">Avulso</dt><dd class="line-through">{{ plan.standaloneTotal | currency }}</dd></div>
-          <div class="flex justify-between text-accent"><dt>Economia do combo</dt><dd>-{{ plan.savings | currency }}</dd></div>
-        } @else {
-          <div class="flex justify-between">
-            <dt class="text-ink-muted">Entrega</dt>
-            <dd>{{ sel.mode() === 'oneshot' ? 'Rápida' : 'Gradual · ' + (sel.unitsPerDay() | number) + '/dia' }}</dd>
-          </div>
-          <div class="flex justify-between"><dt class="text-ink-muted">Prazo</dt><dd>{{ sel.quote().estimate.label }}</dd></div>
-          @if (sel.quote().discount) {
-            <div class="flex justify-between text-accent"><dt>Desconto</dt><dd>-{{ sel.quote().discount | currency }}</dd></div>
-          }
-          @if (sel.quote().dripPremium) {
-            <div class="flex justify-between"><dt class="text-magenta-soft">Adicional entrega gradual</dt><dd>+{{ sel.quote().dripPremium | currency }}</dd></div>
-          }
-        }
-      </dl>
-
-      <div class="mt-5 flex items-baseline justify-between border-t border-dashed border-line pt-5">
-        <span class="text-sm text-ink-muted">Total</span>
-        <span class="display text-3xl tabular-nums">{{ store.total() | currency }}</span>
-      </div>
-
-      <ul class="mt-6 space-y-2 text-xs text-ink-muted">
-        <li class="flex items-center gap-2"><app-icon name="shield" class="h-4 w-4 text-success" /> Garantia de reposição por 30 dias</li>
-        <li class="flex items-center gap-2"><app-icon name="key" class="h-4 w-4 text-success" /> Nunca pedimos sua senha</li>
-        <li class="flex items-center gap-2"><app-icon name="lock" class="h-4 w-4 text-success" /> Pagamento criptografado</li>
-      </ul>
-    </aside>
-  `,
+  templateUrl: './order-summary.component.html',
 })
 export class OrderSummaryComponent {
   protected readonly store = inject(CheckoutStore);

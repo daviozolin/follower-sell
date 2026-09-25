@@ -25,32 +25,7 @@ import { ProfileStepComponent } from './steps/profile-step.component';
     CheckoutSuccessComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <section class="container-page py-10 lg:py-14">
-      <div class="mb-8 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p class="eyebrow flex items-center gap-2"><app-icon name="lock" class="h-3.5 w-3.5" /> Pagamento seguro</p>
-          <h1 class="display mt-3 text-4xl sm:text-5xl">Finalize seu pedido</h1>
-        </div>
-        @if (store.stepIndex() < 3) {
-          <app-checkout-stepper class="w-full sm:max-w-md" />
-        }
-      </div>
-
-      <div class="grid gap-6 lg:grid-cols-[1fr_22rem]">
-        <div class="card p-6 sm:p-8">
-          @switch (store.step()) {
-            @case ('profile') { <app-profile-step /> }
-            @case ('delivery') { <app-delivery-step /> }
-            @case ('payment') { <app-payment-step /> }
-            @case ('pix') { <app-pix-payment /> }
-            @case ('success') { <app-checkout-success /> }
-          }
-        </div>
-        <app-order-summary />
-      </div>
-    </section>
-  `,
+  templateUrl: './checkout.page.html',
 })
 export class CheckoutPage implements OnInit {
   protected readonly store = inject(CheckoutStore);
