@@ -76,6 +76,8 @@
   .eyebrow { @apply inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-accent; }
   .section-title { @apply font-display text-4xl font-extrabold leading-[1.02] tracking-[-0.03em] text-ink sm:text-5xl; }
   .display { @apply font-display font-extrabold tracking-[-0.035em]; }
+  /* Palavra de destaque dentro de um título: serifa editorial em itálico (Playfair Display). */
+  .title-accent { @apply font-accent font-bold italic tracking-[-0.015em]; }
 
   /* Número de seção "01 / 05" usado nos cabeçalhos */
   .section-index { @apply font-mono text-[11px] tracking-[0.2em] text-ink-faint; }

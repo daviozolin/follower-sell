@@ -19,7 +19,7 @@ const SERVICE_META: Record<ServiceType, { icon: IconName; description: string }>
   template: `
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
       <app-section-heading index="02" eyebrow="Serviços">
-        <span title>Escolha a plataforma<br class="hidden sm:block" /> e o <span class="text-accent">objetivo</span>.</span>
+        <span title>Escolha a plataforma<br class="hidden sm:block" /> e o <span class="title-accent text-accent">objetivo</span>.</span>
         <span subtitle>Todos os serviços com garantia de reposição e sem acesso à conta.</span>
       </app-section-heading>
       <app-segmented-control class="w-full max-w-xs" ariaLabel="Plataforma" [options]="platformOptions"

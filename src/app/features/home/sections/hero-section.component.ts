@@ -24,7 +24,7 @@ import { HeroGrowthChartComponent } from '../components/hero-growth-chart.compon
         <h1 class="display mt-7 text-[2.9rem] leading-[0.95] sm:text-6xl lg:text-[5.25rem]">
           Cresça no ritmo
           <span class="relative whitespace-nowrap">
-            <span class="relative z-10 text-accent-ink">do algoritmo</span>
+            <span class="title-accent relative z-10 pr-1 text-accent-ink">do algoritmo</span>
             <span aria-hidden="true" class="absolute -inset-x-2 inset-y-1 -z-0 -rotate-1 rounded-lg bg-accent sm:inset-y-2"></span>
           </span><span class="text-magenta">.</span>
         </h1>

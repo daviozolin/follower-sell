@@ -10,7 +10,7 @@ import { SectionHeadingComponent } from '../../../shared/ui/section-heading.comp
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-section-heading index="05" eyebrow="Segurança & transparência" tone="inverse" align="center">
-      <span title>Nunca pedimos sua senha.<br />Nunca.</span>
+      <span title>Nunca pedimos sua senha.<br /><span class="title-accent">Nunca.</span></span>
       <span subtitle>
         Só precisamos do seu <span class="font-mono font-semibold">&#64;usuario</span> ou do link da publicação — o mesmo que qualquer visitante vê.
         Se alguém pedir sua senha em nosso nome, é golpe.

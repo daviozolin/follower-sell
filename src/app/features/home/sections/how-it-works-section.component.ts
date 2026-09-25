@@ -10,7 +10,7 @@ import { SectionHeadingComponent } from '../../../shared/ui/section-heading.comp
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-section-heading index="01" eyebrow="Como funciona">
-      <span title>Simples assim.<br /><span class="text-accent">4 passos</span>, sem senha.</span>
+      <span title>Simples assim.<br /><span class="title-accent text-accent">4 passos</span>, sem senha.</span>
       <span subtitle>Você não precisa entender de algoritmo. A gente cuida do ritmo para o crescimento parecer natural.</span>
     </app-section-heading>
 

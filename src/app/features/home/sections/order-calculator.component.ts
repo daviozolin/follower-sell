@@ -21,7 +21,7 @@ const SLIDER_STEPS = 1000;
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <app-section-heading index="04" eyebrow="Calculadora">
-      <span title>Quantidade exata.<br /><span class="text-magenta">Preço na hora.</span></span>
+      <span title>Quantidade exata.<br /><span class="title-accent text-magenta">Preço na hora.</span></span>
       <span subtitle>{{ platformLabel() }} · {{ serviceLabel() }} — altere plataforma e serviço no seletor acima.</span>
     </app-section-heading>
 

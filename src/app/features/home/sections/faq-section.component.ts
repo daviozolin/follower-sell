@@ -16,7 +16,7 @@ interface FaqItem {
     <div class="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
       <div class="lg:sticky lg:top-28 lg:self-start">
         <app-section-heading index="06" eyebrow="Dúvidas">
-          <span title>Perguntas <span class="text-magenta">sem</span> letras miúdas.</span>
+          <span title>Perguntas <span class="title-accent text-magenta">sem</span> letras miúdas.</span>
           <span subtitle>Riscos, prazos e garantias explicados de forma direta.</span>
         </app-section-heading>
       </div>

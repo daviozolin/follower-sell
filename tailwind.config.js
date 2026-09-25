@@ -21,6 +21,8 @@ module.exports = {
       fontFamily: {
         sans: ['"Inter Variable"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['"Bricolage Grotesque Variable"', '"Inter Variable"', 'ui-sans-serif', 'sans-serif'],
+        /** Destaques editoriais nos títulos (sempre em itálico). */
+        accent: ['"Playfair Display Variable"', 'Georgia', 'serif'],
         mono: ['"JetBrains Mono Variable"', 'ui-monospace', 'monospace'],
       },
       borderRadius: { xl: '0.875rem', '2xl': '1.25rem', '3xl': '1.75rem' },

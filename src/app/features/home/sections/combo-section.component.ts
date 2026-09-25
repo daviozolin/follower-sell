@@ -35,7 +35,7 @@ const MAX_BASE = 5_000_000;
   template: `
     <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
       <app-section-heading index="03" eyebrow="Combos orgânicos">
-        <span title>Seguidores, curtidas e visualizações<br class="hidden sm:block" /><span class="text-magenta"> no mesmo compasso.</span></span>
+        <span title>Seguidores, curtidas e visualizações<br class="hidden sm:block" /><span class="title-accent text-magenta"> no mesmo compasso.</span></span>
         <span subtitle>
           Um perfil que ganha seguidores mas ninguém curte parece falso. O combo entrega os três juntos,
           na medida certa para o tamanho do seu perfil — como acontece com quem cresce de verdade.
