@@ -6,6 +6,19 @@
   <app-badge tone="accent" [dot]="true" [pulse]="true">ao vivo</app-badge>
 </div>
 
+<!-- Contadores ao vivo: cada reação que estoura no fundo soma aqui -->
+<ul class="mt-4 grid grid-cols-3 gap-2" aria-label="Atividade ao vivo (ilustrativa)">
+  @for (item of live(); track item.kind) {
+    <li class="flex items-center gap-1.5 rounded-xl border border-line bg-canvas/60 px-2.5 py-2">
+      <app-icon [name]="item.icon" class="h-3.5 w-3.5 shrink-0" [class]="item.tone" [stroke]="2.2" />
+      <span class="min-w-0">
+        <span class="block origin-left truncate font-display text-sm font-bold tabular-nums" [appPopOnChange]="item.value">{{ item.value | number }}</span>
+        <span class="block truncate text-[10px] text-ink-faint">{{ item.label }}</span>
+      </span>
+    </li>
+  }
+</ul>
+
 <svg viewBox="0 0 320 150" class="mt-6 w-full overflow-visible" role="img"
      aria-label="Gráfico ilustrativo: crescimento gradual e contínuo, comparado a um pico artificial repentino">
   <defs>

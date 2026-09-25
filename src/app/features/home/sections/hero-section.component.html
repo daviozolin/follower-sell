@@ -1,6 +1,10 @@
-<!-- Fundo exclusivo do hero: onda de partículas (Three.js), lenta e interativa (cursor/clique) + glows -->
-<app-animated-bg variant="wave" [colors]="['#C6FF3D', '#FF2E93']" [opacity]="0.85" [speed]="0.4" [interactive]="true"
-                 class="[mask-image:linear-gradient(to_bottom,transparent_0%,#000_45%,#000_85%,transparent_100%)]" />
+<!--
+  Fundo exclusivo do hero (Three.js): reações de seguidores, curtidas e visualizações surgem,
+  sobem e "pipocam". Mouse deixa rastro de reações; clique/toque solta uma rajada.
+  Cada reação que estoura soma nos contadores do cartão ao lado.
+-->
+<app-animated-bg variant="pop" [opacity]="0.9" [speed]="0.8" [interactive]="true" (reaction)="chart.bump($event)"
+                 class="[mask-image:linear-gradient(to_bottom,transparent_0%,#000_18%,#000_88%,transparent_100%)]" />
 <div aria-hidden="true" class="pointer-events-none absolute -left-40 top-10 h-[28rem] w-[28rem] rounded-full bg-accent/20 blur-[120px]"></div>
 <div aria-hidden="true" class="pointer-events-none absolute -right-32 top-40 h-[26rem] w-[26rem] rounded-full bg-magenta/25 blur-[120px]"></div>
 
@@ -40,7 +44,7 @@
   <!-- Visual animado: crescimento gradual vs. pico artificial -->
   <div class="relative animate-fade-up [animation-delay:120ms]">
     <div class="card relative rotate-1 p-6 transition-transform duration-500 hover:rotate-0">
-      <app-hero-growth-chart />
+      <app-hero-growth-chart #chart />
     </div>
     <div class="absolute -bottom-6 -left-4 flex -rotate-3 items-center gap-2 rounded-xl bg-magenta px-4 py-2.5 text-sm font-semibold text-white shadow-glow-magenta sm:-left-8">
       <app-icon name="key" class="h-4 w-4" [stroke]="2.2" /> 0 senhas pedidas

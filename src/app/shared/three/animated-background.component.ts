@@ -7,12 +7,14 @@ import {
   afterNextRender,
   inject,
   input,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
 import type { BackgroundScene, SceneOptions } from './background-scenes';
+import type { ReactionKind } from './pop-scene';
 
-export type BackgroundVariant = 'wave' | 'aurora';
+export type BackgroundVariant = 'wave' | 'aurora' | 'pop';
 
 const MAX_PIXEL_RATIO = 1.5;
 
@@ -52,6 +54,8 @@ export class AnimatedBackgroundComponent {
   readonly speed = input(1);
   /** Reage ao cursor sobre a seção (colina) e a cliques/toques (ondulação). */
   readonly interactive = input(false);
+  /** Variante `pop`: emitido quando uma reação estoura (seguidor, curtida ou visualização). */
+  readonly reaction = output<ReactionKind>();
 
   protected readonly ready = signal(false);
   private readonly canvas = viewChild.required<ElementRef<HTMLCanvasElement>>('canvas');
@@ -67,7 +71,7 @@ export class AnimatedBackgroundComponent {
 
   private async init(): Promise<void> {
     if (!webglAvailable()) return;
-    const [THREE, scenes] = await Promise.all([import('three'), import('./background-scenes')]);
+    const [THREE, scenes, pop] = await Promise.all([import('three'), import('./background-scenes'), import('./pop-scene')]);
     if (this.destroyed) return;
 
     const canvas = this.canvas().nativeElement;
@@ -80,8 +84,17 @@ export class AnimatedBackgroundComponent {
       density: this.density(),
       speed: this.speed(),
     };
+    const variant = this.variant();
     const bg: BackgroundScene =
-      this.variant() === 'aurora' ? scenes.createAuroraScene(THREE, options) : scenes.createWaveScene(THREE, options);
+      variant === 'aurora'
+        ? scenes.createAuroraScene(THREE, options)
+        : variant === 'pop'
+          ? pop.createPopScene(THREE, {
+              ...options,
+              // o loop roda fora da zona; volta para ela só para emitir o evento
+              onReaction: (kind) => this.zone.run(() => this.reaction.emit(kind)),
+            })
+          : scenes.createWaveScene(THREE, options);
 
     // --- tamanho -------------------------------------------------------------
     const hostEl = this.host.nativeElement as HTMLElement;

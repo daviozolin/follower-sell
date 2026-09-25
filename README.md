@@ -5,7 +5,10 @@ Frontend premium para crescimento de Instagram e TikTok. Usa **somente Standalon
 **Identidade visual:** preto neutro `#08080A`, verde-limão `#C6FF3D` (ação primária) e magenta `#FF2E93` (destaque/premium). Títulos em **Bricolage Grotesque** (display, eixo óptico variável), com palavras de destaque em **Playfair Display** itálico (classe `.title-accent`), texto em **Inter** e números/códigos em **JetBrains Mono** — todas auto-hospedadas via Fontsource (sem Google Fonts).
 
 **Fundos animados (Three.js)** — `shared/three/`: `<app-animated-bg variant="wave|aurora">`.
-- *Onda de partículas* (hero, dúvidas) e *aurora* em ruído fractal (combos, segurança), com shaders próprios.
+- *Reações pipocando* (hero, `pop-scene.ts`): ícones de seguidor, curtida e visualização surgem, sobem e estouram com faíscas;
+  "momentos virais" em rajadas; o mouse deixa rastro e o clique/toque solta uma rajada. Cada estouro emite `(reaction)`,
+  que soma nos contadores ao vivo do cartão do hero (`appPopOnChange` dá o "pulo" no número).
+- *Onda de partículas* (dúvidas) e *aurora* em ruído fractal (combos, segurança), com shaders próprios.
 - Three.js é carregado sob demanda (chunk separado, ~146 KB gzip), fora do bundle inicial.
 - Loop fora da zona do Angular; pausa fora da tela e com a aba oculta; pixel ratio limitado a 1,5.
 - `prefers-reduced-motion` → um quadro estático; sem WebGL → nada é desenhado e os fundos CSS permanecem.
@@ -58,6 +61,7 @@ src/
     │   ├── validators/             # regex IG/TikTok, URLs de post, Luhn, validade, e-mail, sanitização
     │   └── utils/                  # format, hash/PRNG determinístico, localStorage defensivo
     ├── shared/three/               # fundo animado (Three.js): componente + cenas/shaders
+    ├── shared/directives/          # pop-on-change (pulo animado em valores que mudam)
     ├── shared/ui/                  # icon, badge, order-status-badge, tooltip, modal (<dialog>), segmented-control,
     │                               # avatar, qr-code (ilustrativo), toast-outlet, section-heading, marquee,
     │                               # bundle-schedule-chart
